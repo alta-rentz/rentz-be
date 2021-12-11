@@ -13,7 +13,7 @@ import (
 var DB *gorm.DB
 
 func InitDB() {
-	config := os.Getenv("CONNECTION_DB")
+	config := os.Getenv("CONNECTION_STRING")
 
 	var e error
 
