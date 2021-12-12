@@ -38,6 +38,14 @@ func InitMigrate() {
 	DB.AutoMigrate(&models.Users{})
 	DB.AutoMigrate(&models.Photos{})
 	DB.AutoMigrate(&models.Products{})
+	DB.AutoMigrate(&models.Guarantee{})
+	DB.AutoMigrate(&models.ProductsGuarantee{})
+	DB.AutoMigrate(&models.Cart{})
+	DB.AutoMigrate(&models.CheckoutMethodType{})
+	DB.AutoMigrate(&models.CheckoutMethod{})
+	DB.AutoMigrate(&models.Transaction{})
+	DB.AutoMigrate(&models.CartDetail{})
+	DB.AutoMigrate(&models.Reviews{})
 }
 
 // ===============================================================//
