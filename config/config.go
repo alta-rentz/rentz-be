@@ -31,7 +31,13 @@ func InitDB() {
 }
 
 func InitMigrate() {
+	DB.AutoMigrate(&models.Category{})
+	DB.AutoMigrate(&models.Subcategory{})
+	DB.AutoMigrate(&models.Province{})
+	DB.AutoMigrate(&models.City{})
 	DB.AutoMigrate(&models.Users{})
+	DB.AutoMigrate(&models.Photos{})
+	DB.AutoMigrate(&models.Products{})
 }
 
 // ===============================================================//
