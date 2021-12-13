@@ -15,9 +15,7 @@ import (
 
 func CreateUserControllers(c echo.Context) error {
 	user := models.Users{}
-	if err := c.Bind(&user); err != nil {
-		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
-	}
+	c.Bind(&user)
 	if len(user.Password) < 5 {
 		return c.JSON(http.StatusBadRequest, response.PasswordCannotLess5())
 	}
@@ -84,4 +82,16 @@ func LoginUsersController(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, response.LoginSuccessResponse(users))
+}
+
+func GetUserControllerTest() echo.HandlerFunc {
+	return GetUserControllers
+}
+
+func UpdateUserControllerTest() echo.HandlerFunc {
+	return UpdateUserControllers
+}
+
+func DeleteUserControllerTest() echo.HandlerFunc {
+	return DeleteUserControllers
 }
