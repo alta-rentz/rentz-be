@@ -8,11 +8,19 @@ import (
 )
 
 // function database untuk menambahkan user baru (registrasi)
-func CreateUser(user *models.Users) (interface{}, error) {
+func CreateUser(user *models.Users) (*models.Users, error) {
 	if err := config.DB.Create(&user).Error; err != nil {
 		return nil, err
 	}
 	return user, nil
+}
+
+// function database untuk membuat cart user
+func CreateCartUser(cart *models.Cart) (interface{}, error) {
+	if err := config.DB.Create(&cart).Error; err != nil {
+		return nil, err
+	}
+	return cart, nil
 }
 
 // function database untuk menampilkan user by id
