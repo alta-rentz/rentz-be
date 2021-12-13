@@ -17,6 +17,6 @@ type Products struct {
 	Longitude         float64             `gorm:"type:varchar(30);not null" json:"lon" form:"lon"`
 	Latitude          float64             `gorm:"type:varchar(30);not null" json:"lat" form:"lat"`
 	ProductsGuarantee []ProductsGuarantee `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
-	CartDetail        []CartDetail        `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Booking           []Booking           `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Reviews           []Reviews           `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

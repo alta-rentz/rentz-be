@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type CartDetail struct {
+type Booking struct {
 	gorm.Model
 	ProductsID     uint      `json:"product_id" form:"product_id"`
 	CartID         uint      `json:"cart_id" form:"cart_id"`
@@ -17,5 +17,5 @@ type CartDetail struct {
 	Qty            int       `gorm:"not null" json:"qty" form:"qty"`
 	Total          int       `json:"total" form:"total"`
 	Status_Payment string    `gorm:"type:varchar(100)" json:"status_payment" form:"status_payment"`
-	Review         Reviews   `gorm:"foreignKey:CartDetailID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
+	Review         Reviews   `gorm:"foreignKey:BookingID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

@@ -44,7 +44,7 @@ func InitMigrate() {
 	DB.AutoMigrate(&models.CheckoutMethodType{})
 	DB.AutoMigrate(&models.CheckoutMethod{})
 	DB.AutoMigrate(&models.Transaction{})
-	DB.AutoMigrate(&models.CartDetail{})
+	DB.AutoMigrate(&models.Booking{})
 	DB.AutoMigrate(&models.Reviews{})
 }
 
