@@ -9,6 +9,7 @@ import (
 	"project3/models"
 	"project3/plugins"
 	"project3/response"
+	"strconv"
 
 	"cloud.google.com/go/storage"
 	"github.com/labstack/echo/v4"
@@ -16,6 +17,7 @@ import (
 	"google.golang.org/appengine"
 )
 
+// Controller untuk membuat product baru
 func CreateProductControllers(c echo.Context) error {
 	var storageClient *storage.Client
 	var body models.BodyCreateProducts
@@ -107,8 +109,56 @@ func CreateProductControllers(c echo.Context) error {
 	})
 }
 
+// Controller untuk mendapatkan seluruh product
 func GetAllProductsController(c echo.Context) error {
 	product, err := databases.GetAllProducts()
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if product == nil {
+		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
+	}
+	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
+}
+
+// Controller untuk mendapatkan product berdasarkan product id
+func GetProductByIDController(c echo.Context) error {
+	productId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.FalseParamResponse())
+	}
+	product, err := databases.GetProductByID(uint(productId))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if product == nil {
+		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
+	}
+	product.Url, _ = databases.GetUrl(uint(productId))
+	product.Guarantee, _ = databases.GetGuarantee(productId)
+	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
+}
+
+// Controller untuk mendapatkan seluruh product berdasarkan subcategory id
+func GetProductsBySubcategoryIDController(c echo.Context) error {
+	subcategoryId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.FalseParamResponse())
+	}
+	product, err := databases.GetProductsBySubcategoryID(subcategoryId)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if product == nil {
+		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
+	}
+	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
+}
+
+// Controller untuk mendapatkan seluruh product berdasarkan subcategory id
+func GetProductsByUserIDController(c echo.Context) error {
+	userId := middlewares.ExtractTokenUserId(c)
+	product, err := databases.GetProductsBySubcategoryID(userId)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}

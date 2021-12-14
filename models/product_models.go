@@ -44,3 +44,18 @@ type GetAllProduct struct {
 	Stock            int
 	Url              string
 }
+
+// struct get product
+type GetProduct struct {
+	ID               uint
+	UsersID          uint
+	Name             string
+	Subcategory_Name string
+	SubcategoryID    int
+	CityID           int
+	Price            int
+	Description      string
+	Stock            int
+	Url              []string
+	Guarantee        []string
+}
