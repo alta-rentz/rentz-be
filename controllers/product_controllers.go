@@ -59,10 +59,7 @@ func CreateProductControllers(c echo.Context) error {
 
 	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile("keys.json"))
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": err.Error(),
-			"error":   true,
-		})
+		return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
 	}
 
 	// Multipart form
@@ -82,25 +79,16 @@ func CreateProductControllers(c echo.Context) error {
 		sw := storageClient.Bucket(bucket).Object(file.Filename).NewWriter(ctx)
 
 		if _, err := io.Copy(sw, src); err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": err.Error(),
-				"error":   true,
-			})
+			return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
 		}
 
 		if err := sw.Close(); err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": err.Error(),
-				"error":   true,
-			})
+			return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
 		}
 
 		u, err := url.Parse("https://storage.googleapis.com/" + bucket + "/" + sw.Attrs().Name)
 		if err != nil {
-			return c.JSON(http.StatusInternalServerError, map[string]interface{}{
-				"message": err.Error(),
-				"Error":   true,
-			})
+			return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
 		}
 		photo := models.Photos{
 			Photo_Name: sw.Attrs().Name,
@@ -114,6 +102,7 @@ func CreateProductControllers(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
+		"code":    http.StatusOK,
 		"message": "product created and file uploaded successfully",
 	})
 }
@@ -124,7 +113,7 @@ func GetAllProductsController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
 	if product == nil {
-		return c.JSON(http.StatusBadRequest, response.ToolsNotFoundResponse())
+		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
 }

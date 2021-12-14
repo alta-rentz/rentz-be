@@ -33,12 +33,14 @@ type BodyCreateProducts struct {
 
 // struct get product
 type GetAllProduct struct {
-	ID            uint
-	UsersID       uint
-	Name          string
-	SubcategoryID int
-	CityID        int
-	Price         int
-	Description   string
-	Stock         int
+	ID               uint
+	UsersID          uint
+	Name             string
+	Subcategory_Name string
+	SubcategoryID    int
+	CityID           int
+	Price            int
+	Description      string
+	Stock            int
+	Url              string
 }

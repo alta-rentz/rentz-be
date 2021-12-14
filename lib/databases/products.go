@@ -41,7 +41,9 @@ func InsertGuarantee(guarantee *models.ProductsGuarantee) (interface{}, error) {
 // Fungsi untuk mendapatkan seluruh product
 func GetAllProducts() (interface{}, error) {
 	var results []models.GetAllProduct
-	tx := config.DB.Model(&models.Products{}).Find(&results)
+	tx := config.DB.Table("products").Select("products.id, products.users_id, products.name, subcategories.subcategory_name, products.subcategory_id, products.city_id, products.price, products.description, products.stock, photos.url").Group("products.id").Joins(
+		"join subcategories on subcategories.id = products.subcategory_id").Joins(
+		"join photos on photos.products_id = products.id").Where("products.deleted_at IS NULL").Find(&results)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
