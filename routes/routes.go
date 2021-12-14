@@ -21,6 +21,9 @@ func New() *echo.Echo {
 	// User Sign Up & Sign In
 	e.POST("/signup", controllers.CreateUserControllers)
 	e.POST("/signin", controllers.LoginUsersController)
+	e.GET("/products", controllers.GetAllProductsController)
+	e.GET("/products/:id", controllers.GetProductByIDController)
+	e.GET("/products/subcategory/:id", controllers.GetProductsBySubcategoryIDController)
 
 	// JWT Group
 	r := e.Group("/jwt")
@@ -30,6 +33,10 @@ func New() *echo.Echo {
 	r.GET("/users", controllers.GetUserControllers)
 	r.PUT("/users", controllers.UpdateUserControllers)
 	r.DELETE("/users", controllers.DeleteUserControllers)
+
+	// Product JWT
+	r.POST("/products", controllers.CreateProductControllers)
+	r.GET("/products", controllers.GetProductsByUserIDController)
 
 	return e
 }
