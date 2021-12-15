@@ -41,6 +41,18 @@ var (
 		Password:     "123",
 		Phone_Number: "081296620776",
 	}
+	mock_data_user_pass_empty = models.Users{
+		Nama:         "andri",
+		Email:        "andri@gmail.com",
+		Password:     "",
+		Phone_Number: "081296620776",
+	}
+	mock_data_user_phone_empty = models.Users{
+		Nama:         "andri",
+		Email:        "andri@gmail.com",
+		Password:     "bismillah",
+		Phone_Number: "",
+	}
 	mock_data_user_name_error = models.Users{
 		Nama:         "",
 		Email:        "andri@gmail.com",
@@ -59,9 +71,41 @@ var (
 		Password:     "bismillah",
 		Phone_Number: "081296620776",
 	}
+	mock_data_user_email_pass_empty = models.Users{
+		Nama:         "andri",
+		Email:        "",
+		Password:     "",
+		Phone_Number: "081296620776",
+	}
+	mock_data_user_all_empty = models.Users{
+		Nama:         "",
+		Email:        "",
+		Password:     "",
+		Phone_Number: "",
+	}
 	mock_data_login = models.Users{
 		Email:    "andri@gmail.com",
 		Password: "bismillah",
+	}
+	mock_data_login_fail = models.Users{
+		Email:    "andri@gmail.com",
+		Password: "abcdefg",
+	}
+	mock_data_login_email_error = models.Users{
+		Email:    "andri",
+		Password: "abcdefg",
+	}
+	mock_data_login_email_empty = models.Users{
+		Email:    "",
+		Password: "abcdefg",
+	}
+	mock_data_login_pass_empty = models.Users{
+		Email:    "andri",
+		Password: "",
+	}
+	mock_data_login_email_pass_empty = models.Users{
+		Email:    "",
+		Password: "",
 	}
 )
 
@@ -171,7 +215,7 @@ func TestCreateUserControllerNameError(t *testing.T) {
 		expectCode int
 	}{
 
-		name:       "username cannot be empty",
+		name:       "name cannot be empty",
 		path:       "/signup",
 		expectCode: http.StatusBadRequest,
 	}
@@ -286,6 +330,88 @@ func TestCreateUserControllerEmailFormatError(t *testing.T) {
 	}
 }
 
+// test create user phone empty
+func TestCreateUserControllerPhoneEmpty(t *testing.T) {
+	var testCases = struct {
+		name       string
+		path       string
+		expectCode int
+	}{
+
+		name:       "phone number cannot be empty",
+		path:       "/signup",
+		expectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+
+	body, err := json.Marshal(mock_data_user_phone_empty)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// send data using request body with HTTP Method POST
+	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, CreateUserControllers(c)) {
+		bodyrecponses := rec.Body.String()
+		var user UserResponse
+
+		err := json.Unmarshal([]byte(bodyrecponses), &user)
+		if err != nil {
+			assert.Error(t, err, "error")
+		}
+
+		assert.Equal(t, testCases.expectCode, rec.Code)
+		assert.Equal(t, testCases.name, user.Message)
+	}
+}
+
+// test create pass pass empty
+func TestCreateUserControllerPassEmpty(t *testing.T) {
+	var testCases = struct {
+		name       string
+		path       string
+		expectCode int
+	}{
+
+		name:       "password cannot be empty",
+		path:       "/signup",
+		expectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+
+	body, err := json.Marshal(mock_data_user_pass_empty)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// send data using request body with HTTP Method POST
+	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, CreateUserControllers(c)) {
+		bodyrecponses := rec.Body.String()
+		var user UserResponse
+
+		err := json.Unmarshal([]byte(bodyrecponses), &user)
+		if err != nil {
+			assert.Error(t, err, "error")
+		}
+
+		assert.Equal(t, testCases.expectCode, rec.Code)
+		assert.Equal(t, testCases.name, user.Message)
+	}
+}
+
 // test create user isExist
 func TestCreateUserControllerIsExist(t *testing.T) {
 	var testCases = struct {
@@ -328,6 +454,48 @@ func TestCreateUserControllerIsExist(t *testing.T) {
 	}
 }
 
+// test create user all empty
+func TestCreateUserControllerAllEmpty(t *testing.T) {
+	var testCases = struct {
+		name       string
+		path       string
+		expectCode int
+	}{
+
+		name:       "Bad Request",
+		path:       "/signup",
+		expectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+	InsertUser()
+
+	body, err := json.Marshal(mock_data_user_all_empty)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// send data using request body with HTTP Method POST
+	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, CreateUserControllers(c)) {
+		bodyrecponses := rec.Body.String()
+		var user UserResponse
+
+		err := json.Unmarshal([]byte(bodyrecponses), &user)
+		if err != nil {
+			assert.Error(t, err, "error")
+		}
+
+		assert.Equal(t, testCases.expectCode, rec.Code)
+		assert.Equal(t, testCases.name, user.Message)
+	}
+}
+
 // test login user success
 // func TestLoginUserController(t *testing.T) {
 // 	var testCases = struct {
@@ -344,14 +512,13 @@ func TestCreateUserControllerIsExist(t *testing.T) {
 // 	e := InitEcho()
 // 	InsertUser()
 
-// 	var userDB models.Users
-// 	tx := config.DB.Where("email = ? AND password = ?", mock_data_login.Email, mock_data_login.Password).First(&userDB)
-// 	if tx.Error != nil {
-// 		t.Error(tx.Error)
+// 	body, err := json.Marshal(mock_data_login)
+// 	if err != nil {
+// 		t.Error(t, err, "error")
 // 	}
 
 // 	// send data using request body with HTTP Method POST
-// 	req := httptest.NewRequest(http.MethodPost, testCases.path, nil)
+// 	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
 // 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 // 	rec := httptest.NewRecorder()
 
@@ -387,14 +554,176 @@ func TestLoginUserControllerFail(t *testing.T) {
 	e := InitEcho()
 	InsertUser()
 
-	var userDB models.Users
-	tx := config.DB.Where("email = ? AND password = ?", mock_data_login.Email, mock_data_login.Password).First(&userDB)
-	if tx.Error != nil {
-		t.Error(tx.Error)
+	body, err := json.Marshal(mock_data_login_fail)
+	if err != nil {
+		t.Error(t, err, "error")
 	}
 
 	// send data using request body with HTTP Method POST
-	req := httptest.NewRequest(http.MethodPost, testCases.path, nil)
+	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, LoginUsersController(c)) {
+		bodyrecponses := rec.Body.String()
+		var user UserResponse
+
+		err := json.Unmarshal([]byte(bodyrecponses), &user)
+		if err != nil {
+			assert.Error(t, err, "error")
+		}
+
+		assert.Equal(t, testCases.expectCode, rec.Code)
+		assert.Equal(t, testCases.name, user.Message)
+	}
+}
+
+// test create user login format error
+func TestLoginUserControllerEmailFormatError(t *testing.T) {
+	var testCases = struct {
+		name       string
+		path       string
+		expectCode int
+	}{
+
+		name:       "Email must contain email format",
+		path:       "/signin",
+		expectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+
+	body, err := json.Marshal(mock_data_login_email_error)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// send data using request body with HTTP Method POST
+	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, LoginUsersController(c)) {
+		bodyrecponses := rec.Body.String()
+		var user UserResponse
+
+		err := json.Unmarshal([]byte(bodyrecponses), &user)
+		if err != nil {
+			assert.Error(t, err, "error")
+		}
+
+		assert.Equal(t, testCases.expectCode, rec.Code)
+		assert.Equal(t, testCases.name, user.Message)
+	}
+}
+
+// test create user login email pass empty
+func TestLoginUserControllerEmailPasswordEmpty(t *testing.T) {
+	var testCases = struct {
+		name       string
+		path       string
+		expectCode int
+	}{
+
+		name:       "email or password cannot be empty",
+		path:       "/signin",
+		expectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+
+	body, err := json.Marshal(mock_data_login_email_pass_empty)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// send data using request body with HTTP Method POST
+	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, LoginUsersController(c)) {
+		bodyrecponses := rec.Body.String()
+		var user UserResponse
+
+		err := json.Unmarshal([]byte(bodyrecponses), &user)
+		if err != nil {
+			assert.Error(t, err, "error")
+		}
+
+		assert.Equal(t, testCases.expectCode, rec.Code)
+		assert.Equal(t, testCases.name, user.Message)
+	}
+}
+
+// test create user login email empty
+func TestLoginUserControllerEmailEmpty(t *testing.T) {
+	var testCases = struct {
+		name       string
+		path       string
+		expectCode int
+	}{
+
+		name:       "email or password cannot be empty",
+		path:       "/signin",
+		expectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+
+	body, err := json.Marshal(mock_data_login_email_empty)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// send data using request body with HTTP Method POST
+	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	rec := httptest.NewRecorder()
+
+	c := e.NewContext(req, rec)
+
+	if assert.NoError(t, LoginUsersController(c)) {
+		bodyrecponses := rec.Body.String()
+		var user UserResponse
+
+		err := json.Unmarshal([]byte(bodyrecponses), &user)
+		if err != nil {
+			assert.Error(t, err, "error")
+		}
+
+		assert.Equal(t, testCases.expectCode, rec.Code)
+		assert.Equal(t, testCases.name, user.Message)
+	}
+}
+
+// test create user login pass empty
+func TestLoginUserControllerPasswordEmpty(t *testing.T) {
+	var testCases = struct {
+		name       string
+		path       string
+		expectCode int
+	}{
+
+		name:       "email or password cannot be empty",
+		path:       "/signin",
+		expectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+
+	body, err := json.Marshal(mock_data_user_pass_empty)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// send data using request body with HTTP Method POST
+	req := httptest.NewRequest(http.MethodPost, testCases.path, bytes.NewBuffer(body))
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	rec := httptest.NewRecorder()
 
