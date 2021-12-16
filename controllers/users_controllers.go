@@ -8,6 +8,7 @@ import (
 	"project3/plugins"
 	"project3/response"
 	"regexp"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 )
@@ -15,6 +16,7 @@ import (
 func CreateUserControllers(c echo.Context) error {
 	user := models.Users{}
 	c.Bind(&user)
+	spaceEmpty := strings.TrimSpace(user.Nama)
 	if user.Nama == "" && user.Email == "" && user.Password == "" && user.Phone_Number == "" {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
@@ -26,7 +28,7 @@ func CreateUserControllers(c echo.Context) error {
 	}
 	newPass, _ := plugins.Encrypt(user.Password)
 	user.Password = newPass
-	if user.Nama == "" {
+	if spaceEmpty == "" {
 		return c.JSON(http.StatusBadRequest, response.NameCannotEmpty())
 	}
 	if user.Email == "" {
