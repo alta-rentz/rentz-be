@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"net/http"
-	"os"
 	"project3/lib/databases"
 	"project3/middlewares"
 	"project3/models"
@@ -15,8 +14,12 @@ import (
 
 func CreateUserControllers(c echo.Context) error {
 	user := models.Users{}
-	if err := c.Bind(&user); err != nil {
+	c.Bind(&user)
+	if user.Nama == "" && user.Email == "" && user.Password == "" && user.Phone_Number == "" {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if user.Password == "" {
+		return c.JSON(http.StatusBadRequest, response.PasswordCannotEmpty())
 	}
 	if len(user.Password) < 5 {
 		return c.JSON(http.StatusBadRequest, response.PasswordCannotLess5())
@@ -29,12 +32,11 @@ func CreateUserControllers(c echo.Context) error {
 	if user.Email == "" {
 		return c.JSON(http.StatusBadRequest, response.EmailCannotEmpty())
 	}
-	pattern := `^\w+@\w+\.\w+$`
-	matched, tx := regexp.Match(pattern, []byte(user.Email))
-	if tx != nil {
-		os.Exit(1)
-		return c.JSON(http.StatusBadRequest, response.FormatEmailInvalid())
+	if user.Phone_Number == "" {
+		return c.JSON(http.StatusBadRequest, response.PhoneNumberCannotEmpty())
 	}
+	pattern := `^\w+@\w+\.\w+$`
+	matched, _ := regexp.Match(pattern, []byte(user.Email))
 	if !matched {
 		return c.JSON(http.StatusBadRequest, response.FormatEmailInvalid())
 	}
@@ -86,9 +88,29 @@ func LoginUsersController(c echo.Context) error {
 	user := models.UserLogin{}
 	c.Bind(&user)
 	users, err := databases.LoginUser(user)
-	if err != nil || users == 0 {
+	pattern := `^\w+@\w+\.\w+$`
+	matched, _ := regexp.Match(pattern, []byte(user.Email))
+	if user.Email == "" && user.Password == "" {
+		return c.JSON(http.StatusBadRequest, response.EmailPasswordCannotEmpty())
+	} else if user.Email == "" || user.Password == "" {
+		return c.JSON(http.StatusBadRequest, response.EmailPasswordCannotEmpty())
+	} else if !matched {
+		return c.JSON(http.StatusBadRequest, response.FormatEmailInvalid())
+	} else if err != nil || users == 0 {
 		return c.JSON(http.StatusBadRequest, response.LoginFailedResponse())
 	}
 
 	return c.JSON(http.StatusOK, response.LoginSuccessResponse(users))
+}
+
+func GetUserControllersTest() echo.HandlerFunc {
+	return GetUserControllers
+}
+
+func UpdateUserControllersTest() echo.HandlerFunc {
+	return UpdateUserControllers
+}
+
+func DeleteUserControllersTest() echo.HandlerFunc {
+	return DeleteUserControllers
 }

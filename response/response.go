@@ -106,7 +106,7 @@ func PasswordCannotLess5() map[string]interface{} {
 func NameCannotEmpty() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusBadRequest,
-		"message": "username cannot be empty",
+		"message": "name cannot be empty",
 	}
 	return result
 }
@@ -119,9 +119,33 @@ func EmailCannotEmpty() map[string]interface{} {
 	return result
 }
 
+func EmailPasswordCannotEmpty() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "email or password cannot be empty",
+	}
+	return result
+}
+
+func PasswordCannotEmpty() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "password cannot be empty",
+	}
+	return result
+}
+
+func PhoneNumberCannotEmpty() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "phone number cannot be empty",
+	}
+	return result
+}
+
 func IsExist() map[string]interface{} {
 	result := map[string]interface{}{
-		"code":    http.StatusInternalServerError,
+		"code":    http.StatusBadRequest,
 		"message": "Email or Phone Number is Exist",
 	}
 	return result
