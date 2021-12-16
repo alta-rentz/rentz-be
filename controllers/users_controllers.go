@@ -42,9 +42,16 @@ func CreateUserControllers(c echo.Context) error {
 	if !matched {
 		return c.JSON(http.StatusBadRequest, response.FormatEmailInvalid())
 	}
-	_, err := databases.CreateUser(&user)
+	createdUser, err := databases.CreateUser(&user)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, response.IsExist())
+	}
+	cart := models.Cart{
+		UsersID: createdUser.ID,
+	}
+	_, err = databases.CreateCartUser(&cart)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponseNonData())
 }
