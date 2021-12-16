@@ -63,11 +63,6 @@ func CreateProductControllers(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
 	}
 
-	// 32 MB is the default used by FormFile()
-	if err := c.Request().ParseMultipartForm(32 << 20); err != nil {
-		return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
-	}
-
 	// Multipart form
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -99,20 +94,14 @@ func CreateProductControllers(c echo.Context) error {
 		}
 		defer src.Close()
 
-		buff := make([]byte, 512)
-		_, err = src.Read(buff)
-		if err != nil {
-			databases.DeleteProduct(int(createdProduct.ID))
-			return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
-		}
-
-		filetype := http.DetectContentType(buff)
-		if filetype != "image/jpeg" && filetype != "image/png" {
-			databases.DeleteProduct(int(createdProduct.ID))
-			return c.JSON(http.StatusBadRequest, map[string]interface{}{
-				"code":    http.StatusBadRequest,
-				"message": "The provided file format is not allowed. Please upload a JPEG or PNG image",
-			})
+		if file.Filename[len(file.Filename)-3:] != "jpg" && file.Filename[len(file.Filename)-3:] != "png" {
+			if file.Filename[len(file.Filename)-4:] != "jpeg" {
+				databases.DeleteProduct(int(createdProduct.ID))
+				return c.JSON(http.StatusBadRequest, map[string]interface{}{
+					"code":    http.StatusBadRequest,
+					"message": "The provided file format is not allowed. Please upload a JPG or JPEG or PNG image",
+				})
+			}
 		}
 
 		sw := storageClient.Bucket(bucket).Object(file.Filename).NewWriter(ctx)
