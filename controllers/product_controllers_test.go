@@ -30,11 +30,6 @@ type TestCase struct {
 	ExpectCode int
 }
 
-type Login struct {
-	Email    string
-	Password string
-}
-
 // data dummy
 var (
 	mock_data_province = models.Province{
@@ -72,29 +67,21 @@ var (
 		GuaranteeID: 1,
 		ProductsID:  1,
 	}
-	mock_data_user = models.Users{
+	mock_data_user_product = models.Users{
 		Nama:         "alfy",
 		Email:        "alfy@gmail.com",
 		Password:     "12345678",
 		Phone_Number: "081296620776",
 	}
-	mock_data_login = models.Users{
+	mock_data_login_product = models.Users{
 		Email:    "alfy@gmail.com",
 		Password: "12345678",
 	}
 )
 
-// inisialisasi echo
-func InitEcho() *echo.Echo {
-	config.InitDBTest()
-	e := echo.New()
-
-	return e
-}
-
 // Fungsi untuk memasukkan data user test ke dalam database
 func InsertMockDataUsersToDB() error {
-	query := config.DB.Save(&mock_data_user)
+	query := config.DB.Save(&mock_data_user_product)
 	if query.Error != nil {
 		return query.Error
 	}
@@ -115,7 +102,7 @@ func UsingJWT() (string, error) {
 	// Melakukan login data user test
 	InsertMockDataUsersToDB()
 	var user models.Users
-	tx := config.DB.Where("email = ? AND password = ?", mock_data_login.Email, mock_data_login.Password).First(&user)
+	tx := config.DB.Where("email = ? AND password = ?", mock_data_login_product.Email, mock_data_login_product.Password).First(&user)
 	if tx.Error != nil {
 		return "", tx.Error
 	}
@@ -147,7 +134,7 @@ func TestGetAllProductsControllerSuccess(t *testing.T) {
 	e := InitEcho()
 
 	InsertMockDataToDB()
-	config.DB.Save(&mock_data_user)
+	config.DB.Save(&mock_data_user_product)
 	config.DB.Save(&mock_data_product)
 	config.DB.Save(&mock_data_product_guarantee)
 	config.DB.Save(&mock_data_photo)
@@ -922,7 +909,7 @@ func CreateProductControllerTesting() echo.HandlerFunc {
 // kondisi request failed
 func TestCreateProductsControllerNilName(t *testing.T) {
 	var testCase = TestCase{
-		Name:       "Must add name ",
+		Name:       "Must add name",
 		Path:       "/products",
 		ExpectCode: http.StatusBadGateway,
 	}
