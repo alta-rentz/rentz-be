@@ -20,6 +20,7 @@ func InitDB() {
 		log.Fatal("Error loading .env file")
 	}
 	config := os.Getenv("CONNECTION_STRING")
+	// config := os.Getenv("CONNECTION_DB")
 
 	var e error
 
@@ -31,7 +32,21 @@ func InitDB() {
 }
 
 func InitMigrate() {
+	DB.AutoMigrate(&models.Category{})
+	DB.AutoMigrate(&models.Subcategory{})
+	DB.AutoMigrate(&models.Province{})
+	DB.AutoMigrate(&models.City{})
 	DB.AutoMigrate(&models.Users{})
+	DB.AutoMigrate(&models.Photos{})
+	DB.AutoMigrate(&models.Products{})
+	DB.AutoMigrate(&models.Guarantee{})
+	DB.AutoMigrate(&models.ProductsGuarantee{})
+	DB.AutoMigrate(&models.Cart{})
+	DB.AutoMigrate(&models.CheckoutMethodType{})
+	DB.AutoMigrate(&models.CheckoutMethod{})
+	DB.AutoMigrate(&models.Transaction{})
+	DB.AutoMigrate(&models.Booking{})
+	DB.AutoMigrate(&models.Reviews{})
 }
 
 // ===============================================================//
@@ -39,7 +54,7 @@ func InitMigrate() {
 func InitDBTest() {
 	config := map[string]string{
 		"DB_Username": "root",
-		"DB_Password": "root",
+		"DB_Password": "12345678",
 		"DB_Port":     "3306",
 		"DB_Host":     "localhost",
 		"DB_Name":     "db_test",
@@ -62,6 +77,22 @@ func InitDBTest() {
 }
 
 func InitMigrationTest() {
+	DB.Migrator().DropTable(&models.ProductsGuarantee{})
+	DB.Migrator().DropTable(&models.Guarantee{})
+	DB.Migrator().DropTable(&models.Products{})
+	DB.Migrator().DropTable(&models.Photos{})
 	DB.Migrator().DropTable(&models.Users{})
+	DB.Migrator().DropTable(&models.City{})
+	DB.Migrator().DropTable(&models.Province{})
+	DB.Migrator().DropTable(&models.Subcategory{})
+	DB.Migrator().DropTable(&models.Category{})
+	DB.AutoMigrate(&models.Category{})
+	DB.AutoMigrate(&models.Subcategory{})
+	DB.AutoMigrate(&models.Province{})
+	DB.AutoMigrate(&models.City{})
 	DB.AutoMigrate(&models.Users{})
+	DB.AutoMigrate(&models.Photos{})
+	DB.AutoMigrate(&models.Products{})
+	DB.AutoMigrate(&models.Guarantee{})
+	DB.AutoMigrate(&models.ProductsGuarantee{})
 }

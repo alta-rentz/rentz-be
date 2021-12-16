@@ -1,4 +1,5 @@
 mode: set
+<<<<<<< HEAD
 project3/controllers/product_controllers.go:24.53,32.21 6 1
 project3/controllers/product_controllers.go:35.2,39.21 5 0
 project3/controllers/product_controllers.go:42.2,44.28 3 0
@@ -91,3 +92,43 @@ project3/controllers/users_controllers.go:78.16,80.3 1 0
 project3/controllers/users_controllers.go:85.49,89.30 4 0
 project3/controllers/users_controllers.go:93.2,93.68 1 0
 project3/controllers/users_controllers.go:89.30,91.3 1 0
+=======
+project3/controllers/users_controllers.go:15.50,18.91 3 1
+project3/controllers/users_controllers.go:21.2,21.25 1 1
+project3/controllers/users_controllers.go:24.2,24.28 1 1
+project3/controllers/users_controllers.go:27.2,29.21 3 1
+project3/controllers/users_controllers.go:32.2,32.22 1 1
+project3/controllers/users_controllers.go:35.2,35.29 1 1
+project3/controllers/users_controllers.go:38.2,40.14 3 1
+project3/controllers/users_controllers.go:43.2,44.16 2 1
+project3/controllers/users_controllers.go:47.2,47.65 1 1
+project3/controllers/users_controllers.go:18.91,20.3 1 1
+project3/controllers/users_controllers.go:21.25,23.3 1 1
+project3/controllers/users_controllers.go:24.28,26.3 1 1
+project3/controllers/users_controllers.go:29.21,31.3 1 1
+project3/controllers/users_controllers.go:32.22,34.3 1 1
+project3/controllers/users_controllers.go:35.29,37.3 1 1
+project3/controllers/users_controllers.go:40.14,42.3 1 1
+project3/controllers/users_controllers.go:44.16,46.3 1 1
+project3/controllers/users_controllers.go:50.47,53.31 3 1
+project3/controllers/users_controllers.go:56.2,56.66 1 1
+project3/controllers/users_controllers.go:53.31,55.3 1 1
+project3/controllers/users_controllers.go:59.50,64.16 5 1
+project3/controllers/users_controllers.go:67.2,67.65 1 1
+project3/controllers/users_controllers.go:64.16,66.3 1 1
+project3/controllers/users_controllers.go:70.50,73.16 3 1
+project3/controllers/users_controllers.go:76.2,76.65 1 1
+project3/controllers/users_controllers.go:73.16,75.3 1 1
+project3/controllers/users_controllers.go:80.49,86.45 6 1
+project3/controllers/users_controllers.go:96.2,96.68 1 0
+project3/controllers/users_controllers.go:86.45,88.3 1 1
+project3/controllers/users_controllers.go:88.8,88.52 1 1
+project3/controllers/users_controllers.go:88.52,90.3 1 1
+project3/controllers/users_controllers.go:90.8,90.21 1 1
+project3/controllers/users_controllers.go:90.21,92.3 1 1
+project3/controllers/users_controllers.go:92.8,92.37 1 1
+project3/controllers/users_controllers.go:92.37,94.3 1 1
+project3/controllers/users_controllers.go:99.48,101.2 1 1
+project3/controllers/users_controllers.go:103.51,105.2 1 1
+project3/controllers/users_controllers.go:107.51,109.2 1 1
+>>>>>>> 278c5974e8bfa485014d2f853d7b1dea49351475
