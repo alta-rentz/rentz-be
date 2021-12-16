@@ -1,1 +1,5 @@
 .env
+keys.json
+test.sh
+cover.out
+profile.cov

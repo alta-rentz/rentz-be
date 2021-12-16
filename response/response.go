@@ -159,10 +159,10 @@ func FormatEmailInvalid() map[string]interface{} {
 	return result
 }
 
-func ToolsNotFoundResponse() map[string]interface{} {
+func ItemsNotFoundResponse() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusBadRequest,
-		"message": "Tool not found",
+		"message": "Items not found",
 	}
 	return result
 }
@@ -171,6 +171,23 @@ func DateInvalidResponse() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusBadRequest,
 		"message": "Renting Date Invalid",
+	}
+	return result
+}
+
+func UploadErrorResponse(err error) map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusInternalServerError,
+		"message": err.Error(),
+		"error":   true,
+	}
+	return result
+}
+
+func ProductsBadGatewayResponse(message string) map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadGateway,
+		"message": message,
 	}
 	return result
 }
