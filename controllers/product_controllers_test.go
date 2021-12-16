@@ -680,7 +680,42 @@ func CreateProductControllerTesting() echo.HandlerFunc {
 // 	}
 
 // 	InsertMockDataToDB()
-// 	mock_data := models.BodyCreateProducts{
+
+// 	filePath := "download.jpg"
+// 	fieldName := "photos"
+// 	photo := new(bytes.Buffer)
+
+// 	mw := multipart.NewWriter(photo)
+
+// 	file, err := os.Open(filePath)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+
+// 	w, err := mw.CreateFormFile(fieldName, filePath)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
+
+// 	if _, err := io.Copy(w, file); err != nil {
+// 		t.Fatal(err)
+// 	}
+
+// 	// close the writer before making the request
+// 	mw.Close()
+
+// 	type BodyCreate struct {
+// 		Name          string
+// 		SubcategoryID int
+// 		CityID        int
+// 		Price         int
+// 		Description   string
+// 		Stock         int
+// 		Guarantee     []int
+// 		Photo         *os.File
+// 	}
+
+// 	mock_data := BodyCreate{
 // 		Name:          "Kamera DSLR Canon",
 // 		SubcategoryID: 1,
 // 		CityID:        1,
@@ -688,7 +723,9 @@ func CreateProductControllerTesting() echo.HandlerFunc {
 // 		Description:   "Murah yang terbaik",
 // 		Stock:         5,
 // 		Guarantee:     []int{1},
+// 		Photo:         file,
 // 	}
+
 // 	body, err := json.Marshal(mock_data)
 // 	if err != nil {
 // 		t.Error(t, err, "error")
@@ -696,9 +733,14 @@ func CreateProductControllerTesting() echo.HandlerFunc {
 
 // 	req := httptest.NewRequest(http.MethodPost, "/products", bytes.NewBuffer(body))
 // 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+// 	req.Header.Add("Content-Type", mw.FormDataContentType())
 // 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
 // 	res := httptest.NewRecorder()
 // 	context := e.NewContext(req, res)
+
+// 	// router is of type http.Handler
+// 	// http.Handler.ServeHTTP(res, req)
+
 // 	context.SetPath(testCase.Path)
 // 	middleware.JWT([]byte(constant.SECRET_JWT))(CreateProductControllerTesting())(context)
 
