@@ -191,3 +191,11 @@ func ProductsBadGatewayResponse(message string) map[string]interface{} {
 	}
 	return result
 }
+
+func BookingNotFoundResponse() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "Booking not found",
+	}
+	return result
+}
