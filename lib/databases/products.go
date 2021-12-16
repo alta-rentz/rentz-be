@@ -106,3 +106,8 @@ func GetGuarantee(id int) ([]string, error) {
 	}
 	return guarantee, nil
 }
+
+// function database untuk menghapus product  by id
+func DeleteProduct(id int) {
+	config.DB.Exec("DELETE from products WHERE id = ?", id)
+}
