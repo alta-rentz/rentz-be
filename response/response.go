@@ -145,7 +145,7 @@ func PhoneNumberCannotEmpty() map[string]interface{} {
 
 func IsExist() map[string]interface{} {
 	result := map[string]interface{}{
-		"code":    http.StatusBadRequest,
+		"code":    http.StatusInternalServerError,
 		"message": "Email or Phone Number is Exist",
 	}
 	return result
