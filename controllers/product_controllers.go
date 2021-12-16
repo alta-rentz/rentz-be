@@ -26,17 +26,46 @@ func CreateProductControllers(c echo.Context) error {
 
 	// create input product
 	var product models.Products
+	if body.Name == "" {
+		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add product name"))
+	}
 	product.Name = body.Name
 	product.SubcategoryID = body.SubcategoryID
 	product.CityID = body.CityID
+	if body.Price <= 0 {
+		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Price must be more than 0"))
+	}
 	product.Price = body.Price
 	product.Description = body.Description
 	product.Stock = body.Stock
+	if body.Stock <= 0 {
+		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Stock must be more than 0"))
+	}
 	product.UsersID = uint(logged)
 	getCity, _ := databases.GetCity(product.CityID)
 	lat, long, _ := plugins.Geocode(getCity)
 	product.Latitude = lat
 	product.Longitude = long
+
+	bucket := "rentz-id" //your bucket name
+
+	ctx := appengine.NewContext(c.Request())
+
+	storageClient, err := storage.NewClient(ctx, option.WithCredentialsFile("keys.json"))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
+	}
+
+	// Multipart form
+	form, err := c.MultipartForm()
+	if err != nil {
+		return err
+	}
+
+	files := form.File["photos"]
+	if files == nil {
+		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("must add photo"))
+	}
 
 	createdProduct, err := databases.CreateProduct(&product)
 	if err != nil {
@@ -54,22 +83,6 @@ func CreateProductControllers(c echo.Context) error {
 			return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 		}
 	}
-
-	bucket := "rentz-id" //your bucket name
-
-	ctx := appengine.NewContext(c.Request())
-
-	storageClient, err = storage.NewClient(ctx, option.WithCredentialsFile("keys.json"))
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
-	}
-
-	// Multipart form
-	form, err := c.MultipartForm()
-	if err != nil {
-		return err
-	}
-	files := form.File["photos"]
 
 	for _, file := range files {
 		src, err := file.Open()
