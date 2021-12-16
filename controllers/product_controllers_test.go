@@ -909,7 +909,7 @@ func TestCreateProductsControllerNilPrice(t *testing.T) {
 // kondisi request failed
 func TestCreateProductsControllerNilName(t *testing.T) {
 	var testCase = TestCase{
-		Name:       "Must add name ",
+		Name:       "Must add name",
 		Path:       "/products",
 		ExpectCode: http.StatusBadGateway,
 	}
@@ -974,7 +974,7 @@ func TestCreateProductsControllerNilStock(t *testing.T) {
 	}
 
 	InsertMockDataToDB()
-	config.DB.Save(&mock_data_user_product)
+
 	mock_data := models.BodyCreateProducts{
 		Name:          "Kamera Canon",
 		SubcategoryID: 1,
