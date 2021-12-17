@@ -56,8 +56,8 @@ type GetProduct struct {
 	Price            int
 	Description      string
 	Stock            int
-	Longitude        string
-	Latitude         string
+	Longitude        float64
+	Latitude         float64
 	Url              []string
 	Guarantee        []string
 }
