@@ -44,8 +44,8 @@ func CreateProductControllers(c echo.Context) error {
 	product.UsersID = uint(logged)
 	getCity, _ := databases.GetCity(product.CityID)
 	lat, long, _ := plugins.Geocode(getCity)
-	product.Latitude = lat
 	product.Longitude = long
+	product.Latitude = lat
 
 	bucket := "rentz-id" //your bucket name
 
