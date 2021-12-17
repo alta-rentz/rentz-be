@@ -59,7 +59,7 @@ func GetProductByID(id int) (interface{}, error) {
 	if tx.Error != nil || tx.RowsAffected < 1 {
 		return nil, tx.Error
 	}
-	return &result, nil
+	return result, nil
 }
 
 // Fungsi untuk mendapatkan product berdasarkan subcategory_id
