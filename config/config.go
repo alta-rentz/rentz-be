@@ -20,9 +20,9 @@ func InitDB() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	config := os.Getenv("CONNECTION_STRING")
+	// config := os.Getenv("CONNECTION_STRING")
 	API_KEY = os.Getenv("API_KEY")
-	// config := os.Getenv("CONNECTION_DB")
+	config := os.Getenv("CONNECTION_DB")
 
 	var e error
 
