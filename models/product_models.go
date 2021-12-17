@@ -45,6 +45,7 @@ type GetAllProduct struct {
 	Url              string
 }
 
+//
 // struct get product
 type GetProduct struct {
 	ID               uint
