@@ -18,7 +18,7 @@ var API_KEY string
 func InitDB() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err)
 		log.Fatal("Error loading .env file")
 	}
 	config := os.Getenv("CONNECTION_STRING")
