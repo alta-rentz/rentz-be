@@ -140,15 +140,15 @@ func GetProductByIDController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.FalseParamResponse())
 	}
-	product, err := databases.GetProductByID(uint(productId))
+	product, err := databases.GetProductByID(productId)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
 	if product == nil {
 		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
 	}
-	// product.Url, _ = databases.GetUrl(uint(productId))
-	// product.Guarantee, _ = databases.GetGuarantee(productId)
+	product.Url, _ = databases.GetUrl(productId)
+	product.Guarantee, _ = databases.GetGuarantee(productId)
 	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
 }
 
