@@ -51,7 +51,7 @@ func GetAllProducts() (interface{}, error) {
 }
 
 // Fungsi untuk mendapatkan product berdasarkan id product
-func GetProductByID(id int) (interface{}, error) {
+func GetProductByID(id int) (*models.GetProduct, error) {
 	var result models.GetProduct
 	tx := config.DB.Table("products").Select("products.id, products.users_id, products.name, subcategories.subcategory_name, products.subcategory_id, products.city_id, products.price, products.description, products.stock, products.longitude, products.latitude").Joins(
 		"join subcategories on subcategories.id = products.subcategory_id").Joins(
@@ -59,7 +59,7 @@ func GetProductByID(id int) (interface{}, error) {
 	if tx.Error != nil || tx.RowsAffected < 1 {
 		return nil, tx.Error
 	}
-	return result, nil
+	return &result, nil
 }
 
 // Fungsi untuk mendapatkan product berdasarkan subcategory_id
