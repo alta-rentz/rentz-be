@@ -13,6 +13,7 @@ import (
 )
 
 var DB *gorm.DB
+var API_KEY string
 
 func InitDB() {
 	err := godotenv.Load()
@@ -21,6 +22,7 @@ func InitDB() {
 	}
 	config := os.Getenv("CONNECTION_STRING")
 	// config := os.Getenv("CONNECTION_DB")
+	API_KEY = os.Getenv("API_KEY")
 
 	var e error
 
