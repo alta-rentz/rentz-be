@@ -20,7 +20,6 @@ type Products struct {
 	Reviews           []Reviews           `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-//
 // struct body create product
 type BodyCreateProducts struct {
 	Name          string `gorm:"type:varchar(255)" json:"name" form:"name"`
