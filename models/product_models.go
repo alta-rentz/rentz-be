@@ -46,7 +46,6 @@ type GetAllProduct struct {
 	Url              string
 }
 
-// fafa gans ...
 // struct get product
 type GetProduct struct {
 	ID               uint
