@@ -32,7 +32,6 @@ func CreateProductControllers(c echo.Context) error {
 	product.Name = body.Name
 	product.SubcategoryID = body.SubcategoryID
 	product.CityID = body.CityID
-	kota := product.CityID
 	if body.Price <= 0 {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Price must be more than 0"))
 	}
@@ -43,7 +42,7 @@ func CreateProductControllers(c echo.Context) error {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Stock must be more than 0"))
 	}
 	product.UsersID = uint(logged)
-	getCity, _ := databases.GetCity(kota)
+	getCity, _ := databases.GetCity(product.CityID)
 	lat, long, _ := plugins.Geocode(getCity)
 	product.Latitude = lat
 	product.Longitude = long
