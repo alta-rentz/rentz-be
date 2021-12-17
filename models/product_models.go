@@ -22,15 +22,13 @@ type Products struct {
 
 // struct body create product
 type BodyCreateProducts struct {
-	Name          string  `gorm:"type:varchar(255)" json:"name" form:"name"`
-	SubcategoryID int     `json:"subcategory_id" form:"subcategory_id"`
-	CityID        int     `json:"city_id" form:"city_id"`
-	Price         int     `gorm:"not null" json:"price" form:"price"`
-	Description   string  `gorm:"type:longtext;not null" json:"description" form:"description"`
-	Stock         int     `gorm:"type:int;default:1" json:"stock" form:"stock"`
-	Longitude     float64 `json:"lon" form:"lon"`
-	Latitude      float64 `json:"lat" form:"lat"`
-	Guarantee     []int   `json:"guarantee" form:"guarantee"`
+	Name          string `gorm:"type:varchar(255)" json:"name" form:"name"`
+	SubcategoryID int    `json:"subcategory_id" form:"subcategory_id"`
+	CityID        int    `json:"city_id" form:"city_id"`
+	Price         int    `gorm:"not null" json:"price" form:"price"`
+	Description   string `gorm:"type:longtext;not null" json:"description" form:"description"`
+	Stock         int    `gorm:"type:int;default:1" json:"stock" form:"stock"`
+	Guarantee     []int  `json:"guarantee" form:"guarantee"`
 }
 
 // struct get product
@@ -58,6 +56,8 @@ type GetProduct struct {
 	Price            int
 	Description      string
 	Stock            int
+	Longitude        float64
+	Latitude         float64
 	Url              []string
 	Guarantee        []string
 }
