@@ -147,8 +147,8 @@ func GetProductByIDController(c echo.Context) error {
 	if product == nil {
 		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
 	}
-	product.Url, _ = databases.GetUrl(productId)
-	product.Guarantee, _ = databases.GetGuarantee(productId)
+	// product.Url, _ = databases.GetUrl(productId)
+	// product.Guarantee, _ = databases.GetGuarantee(productId)
 	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
 }
 
