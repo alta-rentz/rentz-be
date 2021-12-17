@@ -3,10 +3,11 @@ package config
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"project3/models"
 
-	"github.com/spf13/viper"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -15,25 +16,26 @@ var DB *gorm.DB
 var API_KEY string
 
 func InitDB() {
-	// err := godotenv.Load()
-	// if err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
-	// config := os.Getenv("CONNECTION_STRING")
-	// // config := os.Getenv("CONNECTION_DB")
-	// API_KEY = os.Getenv("API_KEY")
-
-	viper.SetConfigFile(".env")
-	err := viper.ReadInConfig()
-
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error while reading config file %s", err)
+		log.Println(err)
+		log.Fatal("Error loading .env file")
 	}
-	config, ok := viper.Get("CONNECTION_STRING").(string)
+	config := os.Getenv("CONNECTION_STRING")
+	// config := os.Getenv("CONNECTION_DB")
+	API_KEY = os.Getenv("API_KEY")
 
-	if !ok {
-		log.Fatalf("Invalid type assertion")
-	}
+	// viper.SetConfigFile(".env")
+	// err := viper.ReadInConfig()
+
+	// if err != nil {
+	// 	log.Fatalf("Error while reading config file %s", err)
+	// }
+	// config, ok := viper.Get("CONNECTION_STRING").(string)
+
+	// if !ok {
+	// 	log.Fatalf("Invalid type assertion")
+	// }
 
 	var e error
 
