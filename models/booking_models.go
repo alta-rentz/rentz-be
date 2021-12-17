@@ -19,3 +19,17 @@ type Booking struct {
 	Status_Payment string    `gorm:"type:varchar(100)" json:"status_payment" form:"status_payment"`
 	Review         Reviews   `gorm:"foreignKey:BookingID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
+type BookingBody struct {
+	ProductsID uint   `json:"product_id" form:"product_id"`
+	Time_In    string `gorm:"type:datetime;not null" json:"time_in" form:"time_in"`
+	Time_Out   string `gorm:"type:datetime;not null" json:"time_out" form:"time_out"`
+	Qty        int    `gorm:"not null" json:"qty" form:"qty"`
+}
+
+type GetBooking struct {
+	ProductsID  uint
+	Check_In    string
+	Check_Out   string
+	Qty         int
+	Total_Harga int
+}
