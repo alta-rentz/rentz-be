@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"project3/models"
 
@@ -16,7 +17,7 @@ var DB *gorm.DB
 var API_KEY string
 
 func InitDB() {
-	err := godotenv.Load()
+	err := godotenv.Load(filepath.Join(".env"))
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
