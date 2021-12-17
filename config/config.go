@@ -17,7 +17,8 @@ var DB *gorm.DB
 var API_KEY string
 
 func InitDB() {
-	err := godotenv.Load(filepath.Join(".env"))
+	dir, _ := filepath.Abs(filepath.Dir(os.Args[0]))
+	err := godotenv.Load(filepath.Join(dir, ".env"))
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
