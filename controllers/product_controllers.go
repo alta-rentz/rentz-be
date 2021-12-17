@@ -10,12 +10,15 @@ import (
 	"project3/plugins"
 	"project3/response"
 	"strconv"
+	"strings"
 
 	"cloud.google.com/go/storage"
 	"github.com/labstack/echo/v4"
 	"google.golang.org/api/option"
 	"google.golang.org/appengine"
 )
+
+const MAX_UPLOAD_SIZE = 1024 * 1024 // 1MB
 
 // Controller untuk membuat product baru
 func CreateProductControllers(c echo.Context) error {
@@ -29,7 +32,8 @@ func CreateProductControllers(c echo.Context) error {
 	if body.Name == "" {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add product name"))
 	}
-	product.Name = body.Name
+	spaceEmpty := strings.TrimSpace(body.Name)
+	product.Name = spaceEmpty
 	product.SubcategoryID = body.SubcategoryID
 	product.CityID = body.CityID
 	if body.Price <= 0 {
@@ -37,6 +41,9 @@ func CreateProductControllers(c echo.Context) error {
 	}
 	product.Price = body.Price
 	product.Description = body.Description
+	if body.Description == "" {
+		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add description"))
+	}
 	product.Stock = body.Stock
 	if body.Stock <= 0 {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Stock must be more than 0"))
@@ -56,6 +63,11 @@ func CreateProductControllers(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
 	}
 
+	// 32 MB is the default used by FormFile()
+	if err := c.Request().ParseMultipartForm(32 << 20); err != nil {
+		return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
+	}
+
 	// Multipart form
 	form, err := c.MultipartForm()
 	if err != nil {
@@ -72,24 +84,36 @@ func CreateProductControllers(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
 
-	// add product guarantee
-	for _, guarantee := range body.Guarantee {
-		var input = models.ProductsGuarantee{
-			ProductsID:  createdProduct.ID,
-			GuaranteeID: uint(guarantee),
-		}
-		_, err := databases.InsertGuarantee(&input)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
-		}
-	}
-
 	for _, file := range files {
+		if file.Size > MAX_UPLOAD_SIZE {
+			databases.DeleteProduct(int(createdProduct.ID))
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"code":    http.StatusBadRequest,
+				"message": "The uploaded image is too big. Please use an image less than 1MB in size",
+			})
+		}
+
 		src, err := file.Open()
 		if err != nil {
 			return err
 		}
 		defer src.Close()
+
+		buff := make([]byte, 512)
+		_, err = src.Read(buff)
+		if err != nil {
+			databases.DeleteProduct(int(createdProduct.ID))
+			return c.JSON(http.StatusInternalServerError, response.UploadErrorResponse(err))
+		}
+
+		filetype := http.DetectContentType(buff)
+		if filetype != "image/jpeg" && filetype != "image/png" {
+			databases.DeleteProduct(int(createdProduct.ID))
+			return c.JSON(http.StatusBadRequest, map[string]interface{}{
+				"code":    http.StatusBadRequest,
+				"message": "The provided file format is not allowed. Please upload a JPEG or PNG image",
+			})
+		}
 
 		sw := storageClient.Bucket(bucket).Object(file.Filename).NewWriter(ctx)
 
@@ -111,6 +135,19 @@ func CreateProductControllers(c echo.Context) error {
 			ProductsID: uint(createdProduct.ID),
 		}
 		_, err = databases.InsertPhoto(&photo)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+		}
+
+	}
+
+	// add product guarantee
+	for _, guarantee := range body.Guarantee {
+		var input = models.ProductsGuarantee{
+			ProductsID:  createdProduct.ID,
+			GuaranteeID: uint(guarantee),
+		}
+		_, err := databases.InsertGuarantee(&input)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 		}
@@ -140,14 +177,14 @@ func GetProductByIDController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.FalseParamResponse())
 	}
-	product, err := databases.GetProductByID(productId)
+	product, err := databases.GetProductByID(uint(productId))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
 	if product == nil {
 		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
 	}
-	product.Url, _ = databases.GetUrl(productId)
+	product.Url, _ = databases.GetUrl(uint(productId))
 	product.Guarantee, _ = databases.GetGuarantee(productId)
 	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
 }

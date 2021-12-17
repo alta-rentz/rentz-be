@@ -51,9 +51,9 @@ func GetAllProducts() (interface{}, error) {
 }
 
 // Fungsi untuk mendapatkan product berdasarkan id product
-func GetProductByID(id int) (*models.GetProduct, error) {
+func GetProductByID(id uint) (*models.GetProduct, error) {
 	var result models.GetProduct
-	tx := config.DB.Table("products").Select("products.id, products.users_id, products.name, subcategories.subcategory_name, products.subcategory_id, products.city_id, products.price, products.description, products.stock, products.longitude, products.latitude").Joins(
+	tx := config.DB.Table("products").Select("products.id, products.users_id, products.name, subcategories.subcategory_name, products.subcategory_id, products.city_id, products.price, products.description, products.stock, products.latitude, products.longitude").Group("products.id").Joins(
 		"join subcategories on subcategories.id = products.subcategory_id").Joins(
 		"join photos on photos.products_id = products.id").Where("products.id = ?", id).Find(&result)
 	if tx.Error != nil || tx.RowsAffected < 1 {
@@ -62,7 +62,7 @@ func GetProductByID(id int) (*models.GetProduct, error) {
 	return &result, nil
 }
 
-// Fungsi untuk mendapatkan product berdasarkan subcategory_id
+// Fungsi untuk mendapatkan product berdasarkan subcategory id
 func GetProductsBySubcategoryID(id int) (interface{}, error) {
 	var results []models.GetAllProduct
 	tx := config.DB.Table("products").Select("products.id, products.users_id, products.name, subcategories.subcategory_name, products.subcategory_id, products.city_id, products.price, products.description, products.stock, photos.url").Group("products.id").Joins(
@@ -87,7 +87,7 @@ func GetProductsByUserID(id int) (interface{}, error) {
 }
 
 // Fungsi untuk mendapatkan seluruh url photo product tertentu
-func GetUrl(id int) ([]string, error) {
+func GetUrl(id uint) ([]string, error) {
 	var url []string
 	tx := config.DB.Table("photos").Select("photos.url").Where("photos.products_id = ?", id).Find(&url)
 	if tx.Error != nil {
@@ -96,6 +96,7 @@ func GetUrl(id int) ([]string, error) {
 	return url, nil
 }
 
+//
 // Fungsi untuk mendapatkan seluruh guarantee product tertentu
 func GetGuarantee(id int) ([]string, error) {
 	var guarantee []string
@@ -105,4 +106,9 @@ func GetGuarantee(id int) ([]string, error) {
 		return nil, tx.Error
 	}
 	return guarantee, nil
+}
+
+// function database untuk menghapus product  by id
+func DeleteProduct(id int) {
+	config.DB.Exec("DELETE from products WHERE id = ?", id)
 }
