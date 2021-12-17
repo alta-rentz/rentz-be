@@ -23,6 +23,7 @@ func CreateCartUser(cart *models.Cart) (interface{}, error) {
 	return cart, nil
 }
 
+////////
 // function database untuk menampilkan user by id
 func GetUser(id int) (interface{}, error) {
 	var user models.Users

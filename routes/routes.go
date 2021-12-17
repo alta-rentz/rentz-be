@@ -38,5 +38,10 @@ func New() *echo.Echo {
 	r.POST("/products", controllers.CreateProductControllers)
 	r.GET("/products", controllers.GetProductsByUserIDController)
 
+	// Booking JWt
+	r.POST("/booking", controllers.CreateBookingControllers)
+	r.GET("/booking/:id", controllers.GetBookingByIdController)
+	r.DELETE("/booking/:id", controllers.CancelBookingController)
+
 	return e
 }
