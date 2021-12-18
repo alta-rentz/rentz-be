@@ -8,6 +8,7 @@ import (
 
 // Fungsi untuk membuat booking rental baru
 func CreateBooking(rent models.Booking, cart_id int) (*models.Booking, error) {
+	
 	tx := config.DB.Where("products_id=? AND cart_id=? and transaction_id=0", rent.ProductsID, cart_id).Find(&models.Booking{})
 	if tx.Error != nil {
 		return nil, tx.Error

@@ -19,6 +19,11 @@ func CreateBookingControllers(c echo.Context) error {
 	body := models.BookingBody{}
 	c.Bind(&body)
 	logged := middlewares.ExtractTokenUserId(c)
+	var user models.Users
+	var productUser models.Products
+	if user.ID == productUser.UsersID {
+		return c.JSON(http.StatusBadRequest, response.CannotBookingSelfProductResponse())
+	}
 
 	input := models.Booking{}
 
