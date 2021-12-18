@@ -53,9 +53,10 @@ func GetAllProducts() (interface{}, error) {
 // Fungsi untuk mendapatkan product berdasarkan id product
 func GetProductByID(id uint) (*models.GetProduct, error) {
 	var result models.GetProduct
-	tx := config.DB.Table("products").Select("products.id, products.users_id, products.name, subcategories.subcategory_name, products.subcategory_id, products.city_id, products.price, products.description, products.stock").Group("products.id").Joins(
+	tx := config.DB.Table("products").Select("products.id, products.users_id, users.created_at, users.nama, users.phone_number, products.name, products.subcategory_id, subcategories.subcategory_name, products.city_id, products.price, products.description, products.stock, products.latitude, products.longitude").Group("products.id").Joins(
 		"join subcategories on subcategories.id = products.subcategory_id").Joins(
-		"join photos on photos.products_id = products.id").Where("products.id = ?", id).Find(&result)
+		"join photos on photos.products_id = products.id").Joins(
+		"join users on products.users_id = users.id").Where("products.id = ?", id).Find(&result)
 	if tx.Error != nil || tx.RowsAffected < 1 {
 		return nil, tx.Error
 	}
