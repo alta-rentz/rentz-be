@@ -63,7 +63,7 @@ func GetProductByID(id uint) (*models.GetProduct, error) {
 	return &result, nil
 }
 
-// Fungsi untuk mendapatkan product berdasarkan subcategory_id
+// Fungsi untuk mendapatkan product berdasarkan subcategory id
 func GetProductsBySubcategoryID(id int) (interface{}, error) {
 	var results []models.GetAllProduct
 	tx := config.DB.Table("products").Select("products.id, products.users_id, products.name, subcategories.subcategory_name, products.subcategory_id, products.city_id, products.price, products.description, products.stock, photos.url").Group("products.id").Joins(
@@ -97,6 +97,7 @@ func GetUrl(id uint) ([]string, error) {
 	return url, nil
 }
 
+//
 // Fungsi untuk mendapatkan seluruh guarantee product tertentu
 func GetGuarantee(id int) ([]string, error) {
 	var guarantee []string
