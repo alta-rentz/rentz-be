@@ -16,8 +16,8 @@ type Products struct {
 	Price             int                 `gorm:"not null" json:"price" form:"price"`
 	Description       string              `gorm:"type:longtext;not null" json:"description" form:"description"`
 	Stock             int                 `gorm:"type:int;default:1" json:"stock" form:"stock"`
-	Longitude         float64             `json:"lon" form:"lon"`
-	Latitude          float64             `json:"lat" form:"lat"`
+	Longitude         float64             `gorm:"type:varchar(30);not null" json:"lon" form:"lon"`
+	Latitude          float64             `gorm:"type:varchar(30);not null" json:"lat" form:"lat"`
 	Photos            []Photos            `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	ProductsGuarantee []ProductsGuarantee `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Booking           []Booking           `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
@@ -43,6 +43,7 @@ type GetAllProduct struct {
 	Subcategory_Name string
 	SubcategoryID    int
 	CityID           int
+	City_Name        string
 	Price            int
 	Description      string
 	Stock            int
@@ -60,11 +61,12 @@ type GetProduct struct {
 	SubcategoryID    int
 	Subcategory_Name string
 	CityID           int
+	City_Name        string
 	Price            int
 	Description      string
 	Stock            int
-	Latitude         float64
 	Longitude        float64
+	Latitude         float64
 	Url              []string
 	Guarantee        []string
 }
