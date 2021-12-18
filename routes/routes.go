@@ -37,6 +37,7 @@ func New() *echo.Echo {
 	// Product JWT
 	r.POST("/products", controllers.CreateProductControllers)
 	r.GET("/products", controllers.GetProductsByUserIDController)
+	r.DELETE("/products/:id", controllers.DeleteProductByIDController)
 
 	return e
 }

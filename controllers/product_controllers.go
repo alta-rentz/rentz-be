@@ -199,7 +199,7 @@ func GetProductsBySubcategoryIDController(c echo.Context) error {
 // Controller untuk mendapatkan seluruh product berdasarkan subcategory id
 func GetProductsByUserIDController(c echo.Context) error {
 	userId := middlewares.ExtractTokenUserId(c)
-	product, err := databases.GetProductsBySubcategoryID(userId)
+	product, err := databases.GetProductsByUserID(userId)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
@@ -207,4 +207,21 @@ func GetProductsByUserIDController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
+}
+
+func DeleteProductByIDController(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.FalseParamResponse())
+	}
+	userId, _ := databases.GetProductOwner(id)
+	if err != nil || userId == 0 {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	logged := middlewares.ExtractTokenUserId(c)
+	if logged != userId {
+		return c.JSON(http.StatusBadRequest, response.AccessForbiddenResponse())
+	}
+	databases.DeleteProductByID(id)
+	return c.JSON(http.StatusOK, response.SuccessResponseNonData())
 }
