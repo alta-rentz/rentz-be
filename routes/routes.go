@@ -42,7 +42,7 @@ func New() *echo.Echo {
 	// Booking JWt
 	r.POST("/booking", controllers.CreateBookingControllers)
 	r.GET("/booking/:id", controllers.GetBookingByIdController)
-	r.GET("/booking", controllers.GetBookingByCartIDController)
+	r.GET("/cart", controllers.GetBookingByCartIDController)
 	r.DELETE("/booking/:id", controllers.CancelBookingController)
 
 	return e
