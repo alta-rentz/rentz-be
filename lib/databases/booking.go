@@ -31,7 +31,7 @@ func AccumulatedDays(timeIn time.Time, timeOut time.Time, idBooking uint) {
 func AddPriceBooking(idProduct, idBooking uint) int {
 	var price int
 	config.DB.Exec("UPDATE bookings SET total = (SELECT price FROM products WHERE id = ?)*total_day*qty WHERE id = ?", idProduct, idBooking)
-	tx := config.DB.Raw("SELECT total FROM booking WHERE id = ?", idBooking).Scan(&price)
+	tx := config.DB.Raw("SELECT total FROM bookings WHERE id = ?", idBooking).Scan(&price)
 	if tx.Error != nil {
 		return 0
 	}

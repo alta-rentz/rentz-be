@@ -8,7 +8,6 @@ require (
 	github.com/joho/godotenv v1.4.0
 	github.com/kelvins/geocoder v0.0.0-20200113010004-f579500e9e27
 	github.com/labstack/echo/v4 v4.6.1
-	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
 	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
