@@ -65,3 +65,12 @@ func GetCartId(user_id int) (models.Cart, error) {
 	}
 	return cart, nil
 }
+
+func GetBookingByCartID(id int) (interface{}, error) {
+	var booking []models.GetBookingDetail
+	tx := config.DB.Model(models.Booking{}).Where("cart_id=? AND status_payment = \"waiting\"", id).Find(&booking)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return nil, tx.Error
+	}
+	return booking, nil
+}

@@ -37,10 +37,12 @@ func New() *echo.Echo {
 	// Product JWT
 	r.POST("/products", controllers.CreateProductControllers)
 	r.GET("/products", controllers.GetProductsByUserIDController)
+	r.DELETE("/products/:id", controllers.DeleteProductByIDController)
 
 	// Booking JWt
 	r.POST("/booking", controllers.CreateBookingControllers)
 	r.GET("/booking/:id", controllers.GetBookingByIdController)
+	r.GET("/booking", controllers.GetBookingByCartIDController)
 	r.DELETE("/booking/:id", controllers.CancelBookingController)
 
 	return e
