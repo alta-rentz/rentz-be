@@ -117,3 +117,21 @@ func GetGuarantee(id int) ([]string, error) {
 func DeleteProduct(id int) {
 	config.DB.Exec("DELETE from products WHERE id = ?", id)
 }
+
+// Fungsi untuk product by id
+func DeleteProductByID(id int) (interface{}, error) {
+	var product models.Products
+	if err := config.DB.Where("id = ?", id).Delete(&product).Error; err != nil {
+		return nil, err
+	}
+	return "deleted", nil
+}
+
+func GetProductOwner(id int) (int, error) {
+	var ownerProduct int
+	tx := config.DB.Raw("SELECT users_id FROM products WHERE id = ?", id).Scan(&ownerProduct)
+	if tx.Error != nil {
+		return 0, tx.Error
+	}
+	return ownerProduct, nil
+}
