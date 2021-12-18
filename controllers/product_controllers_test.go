@@ -63,6 +63,15 @@ var (
 		Description:   "Murah yang terbaik",
 		Stock:         5,
 	}
+	mock_data_product2 = models.Products{
+		Name:          "Kamera DSLR Nikon",
+		UsersID:       2,
+		SubcategoryID: 1,
+		CityID:        1,
+		Price:         50000,
+		Description:   "Murah yang terbaik",
+		Stock:         2,
+	}
 	mock_data_photo = models.Photos{
 		Photo_Name: "inicontohfoto.jpg",
 		Url:        "https://googlecloud/inicontohfoto.jgp",
@@ -71,6 +80,12 @@ var (
 	mock_data_product_guarantee = models.ProductsGuarantee{
 		GuaranteeID: 1,
 		ProductsID:  1,
+	}
+	mock_data_user2 = models.Users{
+		Nama:         "alfy1",
+		Email:        "alfy1@gmail.com",
+		Password:     "12345678",
+		Phone_Number: "081296627876",
 	}
 	mock_data_user = models.Users{
 		Nama:         "alfy",
@@ -1074,3 +1089,175 @@ func TestCreateProductsControllerNilName(t *testing.T) {
 // 	})
 
 // }
+
+// Fungsi testing DeleteProductController
+func DeleteProductControllerTesting() echo.HandlerFunc {
+	return DeleteProductByIDController
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteProductsControllerSuccess(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "Success delete product",
+		Path:       "/products",
+		ExpectCode: http.StatusOK,
+	}
+
+	e := InitEcho()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataToDB()
+	config.DB.Save(&mock_data_product)
+
+	req := httptest.NewRequest(http.MethodDelete, "/products", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(DeleteProductControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/products", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteProductsControllerFailed(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "Failed to delete product",
+		Path:       "/products/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Products{})
+
+	req := httptest.NewRequest(http.MethodDelete, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(DeleteProductControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/products/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteProductsControllerFalseParam(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "False param",
+		Path:       "/products",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("!")
+	middleware.JWT([]byte(constant.SECRET_JWT))(DeleteProductControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/products/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "False Param", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteProductsControllerNotAllowed(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "Not allowed to delet",
+		Path:       "/products/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEcho()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataToDB()
+	config.DB.Save(&mock_data_user2)
+	config.DB.Save(&mock_data_product)
+	config.DB.Save(&mock_data_product2)
+
+	req := httptest.NewRequest(http.MethodDelete, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("2")
+	middleware.JWT([]byte(constant.SECRET_JWT))(DeleteProductControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/products/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Access Forbidden", response.Message)
+	})
+
+}
