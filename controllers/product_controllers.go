@@ -29,21 +29,23 @@ func CreateProductControllers(c echo.Context) error {
 
 	// create input product
 	var product models.Products
-	if body.Name == "" {
+	spaceEmptyName := strings.TrimSpace(body.Name)
+	noEnterName := strings.TrimRight(spaceEmptyName, "\r\n")
+	if noEnterName == "" {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add product name"))
 	}
-	spaceEmpty := strings.TrimSpace(body.Name)
-	product.Name = spaceEmpty
+	product.Name = noEnterName
 	product.SubcategoryID = body.SubcategoryID
 	product.CityID = body.CityID
 	if body.Price <= 0 {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Price must be more than 0"))
 	}
 	product.Price = body.Price
-	product.Description = body.Description
-	if body.Description == "" {
+	spaceEmptyDesc := strings.TrimSpace(body.Description)
+	if spaceEmptyDesc == "" {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add description"))
 	}
+	product.Description = spaceEmptyDesc
 	product.Stock = body.Stock
 	if body.Stock <= 0 {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Stock must be more than 0"))
