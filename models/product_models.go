@@ -1,6 +1,10 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 // struct user
 type Products struct {
@@ -49,9 +53,12 @@ type GetAllProduct struct {
 type GetProduct struct {
 	ID               uint
 	UsersID          uint
+	CreatedAt        time.Time
+	Nama             string
+	Phone_Number     string
 	Name             string
-	Subcategory_Name string
 	SubcategoryID    int
+	Subcategory_Name string
 	CityID           int
 	Price            int
 	Description      string
