@@ -26,7 +26,7 @@ func CreateBookingControllers(c echo.Context) error {
 	input.CartID = uint(cart.ID)
 	input.ProductsID = body.ProductsID
 	input.Qty = body.Qty
-	input.TransactionID = 1
+	input.TransactionID = nil
 	input.Time_In, _ = time.Parse(format_date, body.Time_In)
 	input.Time_Out, _ = time.Parse(format_date, body.Time_Out)
 	if input.Time_In.Unix() > input.Time_Out.Unix() {
