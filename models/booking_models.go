@@ -16,7 +16,7 @@ type Booking struct {
 	Total_Day      int       `json:"total_day" form:"total_day"`
 	Qty            int       `gorm:"not null" json:"qty" form:"qty"`
 	Total          int       `json:"total" form:"total"`
-	Status_Payment string    `gorm:"type:varchar(100)" json:"status_payment" form:"status_payment"`
+	Status_Payment string    `gorm:"type:varchar(100);default:waiting" json:"status_payment" form:"status_payment"`
 	Review         Reviews   `gorm:"foreignKey:BookingID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 type BookingBody struct {
@@ -27,9 +27,18 @@ type BookingBody struct {
 }
 
 type GetBooking struct {
-	ProductsID  uint
-	Check_In    string
-	Check_Out   string
-	Qty         int
-	Total_Harga int
+	ProductsID uint
+	Time_In    string
+	Time_Out   string
+	Qty        int
+	Total      int
+}
+
+type GetBookingDetail struct {
+	ProductsID uint
+	Time_In    string
+	Time_Out   string
+	Total_Day  int
+	Qty        int
+	Total      int
 }

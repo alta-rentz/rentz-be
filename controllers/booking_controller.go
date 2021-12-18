@@ -74,3 +74,19 @@ func CancelBookingController(c echo.Context) error {
 	databases.CancelBooking(id)
 	return c.JSON(http.StatusOK, response.SuccessResponseNonData())
 }
+
+func GetBookingByCartIDController(c echo.Context) error {
+	logged := middlewares.ExtractTokenUserId(c)
+	cart, err := databases.GetCartId(logged)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	rent, err := databases.GetBookingByCartID(int(cart.ID))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if rent == nil {
+		return c.JSON(http.StatusBadRequest, response.BookingNotFoundResponse())
+	}
+	return c.JSON(http.StatusOK, response.SuccessResponseData(rent))
+}
