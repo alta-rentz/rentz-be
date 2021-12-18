@@ -43,6 +43,7 @@ type GetAllProduct struct {
 	Subcategory_Name string
 	SubcategoryID    int
 	CityID           int
+	City_Name        string
 	Price            int
 	Description      string
 	Stock            int
@@ -60,6 +61,7 @@ type GetProduct struct {
 	SubcategoryID    int
 	Subcategory_Name string
 	CityID           int
+	City_Name        string
 	Price            int
 	Description      string
 	Stock            int
