@@ -21,7 +21,7 @@ func InitDB() {
 		log.Fatal(err)
 		log.Fatal("Error loading .env file")
 	}
-	// ---------
+	// -----------
 	config := os.Getenv("CONNECTION_STRING")
 	// config := os.Getenv("CONNECTION_LOCAL")
 	API_KEY = os.Getenv("API_KEY")
@@ -93,6 +93,12 @@ func InitDBTest() {
 }
 
 func InitMigrationTest() {
+	DB.Migrator().DropTable(&models.Reviews{})
+	DB.Migrator().DropTable(&models.Booking{})
+	DB.Migrator().DropTable(&models.Transaction{})
+	DB.Migrator().DropTable(&models.CheckoutMethod{})
+	DB.Migrator().DropTable(&models.CheckoutMethodType{})
+	DB.Migrator().DropTable(&models.Cart{})
 	DB.Migrator().DropTable(&models.ProductsGuarantee{})
 	DB.Migrator().DropTable(&models.Guarantee{})
 	DB.Migrator().DropTable(&models.Products{})
@@ -111,4 +117,10 @@ func InitMigrationTest() {
 	DB.AutoMigrate(&models.Products{})
 	DB.AutoMigrate(&models.Guarantee{})
 	DB.AutoMigrate(&models.ProductsGuarantee{})
+	DB.AutoMigrate(&models.Cart{})
+	DB.AutoMigrate(&models.CheckoutMethodType{})
+	DB.AutoMigrate(&models.CheckoutMethod{})
+	DB.AutoMigrate(&models.Transaction{})
+	DB.AutoMigrate(&models.Booking{})
+	DB.AutoMigrate(&models.Reviews{})
 }
