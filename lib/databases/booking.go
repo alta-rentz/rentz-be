@@ -8,7 +8,7 @@ import (
 
 // Fungsi untuk membuat booking rental baru
 func CreateBooking(rent models.Booking, cart_id int) (*models.Booking, error) {
-	
+
 	tx := config.DB.Where("products_id=? AND cart_id=? and transaction_id=0", rent.ProductsID, cart_id).Find(&models.Booking{})
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -73,4 +73,29 @@ func GetBookingByCartID(id int) (interface{}, error) {
 		return nil, tx.Error
 	}
 	return booking, nil
+}
+
+type RentDate struct {
+	Time_In  time.Time
+	Time_Out time.Time
+}
+
+// Fungsi untuk mendapatkan tanggal check_in dan time_out suatu reservasi
+func ProductRentList(id int) ([]RentDate, error) {
+	var dates []RentDate
+	tx := config.DB.Table("bookings").Select("bookings.time_in, bookings.time_out").Where("bookings.products_id = ? AND bookings.time_out > ?", id, time.Now()).Find(&dates)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return nil, tx.Error
+	}
+	return dates, nil
+}
+
+// Fungsi untuk menambahkan harga pada reservasi
+func GetHargaRoom(idRoom int) (int, error) {
+	var harga int
+	tx := config.DB.Raw("SELECT harga FROM rooms WHERE id = ?", idRoom).Scan(&harga)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return 0, tx.Error
+	}
+	return harga, nil
 }

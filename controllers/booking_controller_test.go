@@ -18,7 +18,7 @@ import (
 )
 
 // Struct yang digunakan ketika test request success, dapat menampung banyak data
-type CartResponse struct {
+type CartBookResponse struct {
 	Code    string
 	Message string
 }
@@ -98,7 +98,7 @@ var (
 	time1             = time.Now()
 	time2             = time.Now().AddDate(0, 0, 2)
 	mock_data_booking = models.Booking{
-		ProductsID:     2,
+		ProductsID:     1,
 		CartID:         1,
 		Time_In:        time1,
 		Time_Out:       time2,
@@ -142,13 +142,13 @@ func InsertMockDataCToDB() {
 	config.DB.Save(&mock_data_checkoutmethod)
 }
 
-// inisialisasi echo
-func InitEcho() *echo.Echo {
-	config.InitDBTest()
-	e := echo.New()
+// // inisialisasi echo
+// func InitEcho() *echo.Echo {
+// 	config.InitDBTest()
+// 	e := echo.New()
 
-	return e
-}
+// 	return e
+// }
 
 // Fungsi untuk melakukan login dan ekstraksi token JWT
 func UsingJWTC() (string, error) {
@@ -207,7 +207,7 @@ func TestGetBookingByCartIDControllerSuccess(t *testing.T) {
 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
 
 	res_body := res.Body.String()
-	var response CartResponse
+	var response CartBookResponse
 	er := json.Unmarshal([]byte(res_body), &response)
 	if er != nil {
 		assert.Error(t, er, "error")
@@ -244,7 +244,7 @@ func TestGetBookingByCartIDControllerNotFound(t *testing.T) {
 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
 
 	res_body := res.Body.String()
-	var response CartResponse
+	var response CartBookResponse
 	er := json.Unmarshal([]byte(res_body), &response)
 	if er != nil {
 		assert.Error(t, er, "error")
@@ -284,7 +284,7 @@ func TestGetBookingByCartIDControllerFailed(t *testing.T) {
 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
 
 	res_body := res.Body.String()
-	var response CartResponse
+	var response CartBookResponse
 	er := json.Unmarshal([]byte(res_body), &response)
 	if er != nil {
 		assert.Error(t, er, "error")
@@ -324,7 +324,7 @@ func TestGetBookingByCartIDControllerCartNotFound(t *testing.T) {
 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
 
 	res_body := res.Body.String()
-	var response CartResponse
+	var response CartBookResponse
 	er := json.Unmarshal([]byte(res_body), &response)
 	if er != nil {
 		assert.Error(t, er, "error")
@@ -335,3 +335,56 @@ func TestGetBookingByCartIDControllerCartNotFound(t *testing.T) {
 	})
 
 }
+
+//====================================================================================================================================
+
+// // Fungsi untuk melakukan testing fungsi ProductRentCheckController
+// // kondisi request success
+// func TestProductRentCheckControllerrSuccess(t *testing.T) {
+// 	var testCase = TestCaseCart{
+// 		Name:       "items available",
+// 		Path:       "/booking/check/:id",
+// 		ExpectCode: http.StatusOK,
+// 	}
+
+// 	e := InitEcho()
+
+// 	InsertMockDataCToDB()
+// 	config.DB.Save(&mock_data_user_c)
+// 	config.DB.Save(&mock_data_product_c)
+// 	config.DB.Save(&mock_data_cart)
+// 	config.DB.Save(&mock_data_checkoutmethod)
+// 	config.DB.Save(&mock_data_methodtype)
+// 	config.DB.Save(&mock_data_transaction)
+// 	config.DB.Save(&mock_data_booking)
+
+// 	check := BodyDate{
+// 		Time_In:  "2022-01-02",
+// 		Time_Out: "2022-01-04",
+// 	}
+// 	fmt.Println("ini test: ", check)
+
+// 	body, err := json.Marshal(check)
+// 	if err != nil {
+// 		t.Error(t, err, "error")
+// 	}
+// 	fmt.Println("ini test: ", body)
+// 	req := httptest.NewRequest(http.MethodPost, "/booking/check/:id", bytes.NewBuffer(body))
+// 	res := httptest.NewRecorder()
+// 	context := e.NewContext(req, res)
+// 	context.SetPath(testCase.Path)
+// 	context.SetParamNames("id")
+// 	context.SetParamValues("1")
+// 	ProductRentCheckController(context)
+
+// 	res_body := res.Body.String()
+// 	var response CartBookResponse
+// 	er := json.Unmarshal([]byte(res_body), &response)
+// 	if er != nil {
+// 		assert.Error(t, er, "error")
+// 	}
+
+// 	assert.Equal(t, testCase.ExpectCode, res.Code)
+// 	assert.Equal(t, "Item available", response.Message)
+
+// }
