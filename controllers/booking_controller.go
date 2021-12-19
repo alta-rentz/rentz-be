@@ -115,9 +115,6 @@ func ProductRentCheckController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
-	if dateList == nil {
-		return c.JSON(http.StatusBadRequest, response.BookingNotFoundResponse())
-	}
 
 	input := InputDate{}
 	input.Time_In, _ = time.Parse(format_date, body.Time_In)
