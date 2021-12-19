@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"project3/lib/databases"
 	"project3/middlewares"
@@ -107,7 +106,6 @@ type InputDate struct {
 func ProductRentCheckController(c echo.Context) error {
 	body := BodyDate{}
 	c.Bind(&body)
-	fmt.Println(body)
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.FalseParamResponse())
@@ -123,9 +121,7 @@ func ProductRentCheckController(c echo.Context) error {
 
 	input := InputDate{}
 	input.Time_In, _ = time.Parse(format_date, body.Time_In)
-	fmt.Println(input.Time_In)
 	input.Time_Out, _ = time.Parse(format_date, body.Time_Out)
-	fmt.Println(input.Time_In)
 
 	if input.Time_In.Unix() < time.Now().Unix() || input.Time_Out.Unix() < time.Now().Unix() {
 		return c.JSON(http.StatusBadRequest, response.DateInvalidResponse())
