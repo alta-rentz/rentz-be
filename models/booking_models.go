@@ -35,7 +35,7 @@ type GetBooking struct {
 }
 
 type GetBookingDetail struct {
-	BookingID  uint
+	ID         uint
 	ProductsID uint
 	Time_In    string
 	Time_Out   string
