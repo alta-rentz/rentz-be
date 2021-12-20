@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"project3/lib/databases"
 	"project3/middlewares"
@@ -32,6 +33,14 @@ func CreateBookingControllers(c echo.Context) error {
 	if input.Time_In.Unix() > input.Time_Out.Unix() {
 		return c.JSON(http.StatusBadRequest, response.DateInvalidResponse())
 	}
+
+	// var product models.Products
+	tokenProduct, _ := databases.GetProductOwner(int(body.ProductsID))
+	// IDUser := strconv.Itoa(int(logged))
+	if logged == tokenProduct {
+		return c.JSON(http.StatusBadRequest, "ga bisa")
+	}
+	log.Println("tokenProduct =", tokenProduct, "userID =", logged)
 
 	rent, err := databases.CreateBooking(input, int(cart.ID))
 	if err != nil {
