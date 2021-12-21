@@ -36,7 +36,7 @@ func CreateCheckout(CheckOut models.CheckOut) (*models.Transaction, error) {
 	}
 	// Update Status
 	for i := 0; i < len(CheckOut.Booking_ID); i++ {
-		tx := config.DB.Model(&models.Booking{}).Where("id=? AND status_payment='waiting'", CheckOut.Booking_ID[i]).Updates(models.Booking{Status_Payment: "succes", TransactionID: &newCheckout.ID})
+		tx := config.DB.Model(models.Booking{}).Where("id=? AND status_payment='waiting'", CheckOut.Booking_ID[i]).Updates(models.Booking{Status_Payment: "succes", TransactionID: &newCheckout.ID})
 		if err := tx.Error; err != nil {
 			return nil, tx.Error
 		}

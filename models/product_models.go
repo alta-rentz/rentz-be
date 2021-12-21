@@ -18,6 +18,7 @@ type Products struct {
 	Stock             int                 `gorm:"type:int;default:1" json:"stock" form:"stock"`
 	Longitude         float64             `gorm:"type:varchar(30);not null" json:"lon" form:"lon"`
 	Latitude          float64             `gorm:"type:varchar(30);not null" json:"lat" form:"lat"`
+	Rating            float64             `gorm:"type:decimal(2,1)" json:"rating" form:"rating"`
 	Photos            []Photos            `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	ProductsGuarantee []ProductsGuarantee `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	Booking           []Booking           `gorm:"foreignKey:ProductsID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`

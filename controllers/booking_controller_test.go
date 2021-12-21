@@ -110,15 +110,6 @@ var (
 	mock_data_transaction = models.Transaction{
 		Total: 100000,
 	}
-	mock_data_checkoutmethod = models.CheckoutMethod{
-		ID:                   1,
-		Checkout_Name:        "ovo",
-		CheckoutMethodTypeID: 1,
-	}
-	mock_data_methodtype = models.CheckoutMethodType{
-		ID:            1,
-		Checkout_Type: "kredit",
-	}
 )
 
 // Fungsi untuk memasukkan data user test ke dalam database
@@ -137,8 +128,6 @@ func InsertMockDataCToDB() {
 	config.DB.Save(&mock_data_province_c)
 	config.DB.Save(&mock_data_city_c)
 	config.DB.Save(&mock_data_guarantee_c)
-	config.DB.Save(&mock_data_methodtype)
-	config.DB.Save(&mock_data_checkoutmethod)
 }
 
 // // inisialisasi echo
@@ -192,9 +181,9 @@ func TestGetBookingByCartIDControllerSuccess(t *testing.T) {
 	config.DB.Save(&mock_data_product_c)
 	config.DB.Save(&mock_data_product2_c)
 	config.DB.Save(&mock_data_cart)
-	config.DB.Save(&mock_data_checkoutmethod)
-	config.DB.Save(&mock_data_methodtype)
-	config.DB.Save(&mock_data_transaction)
+	// config.DB.Save(&mock_data_checkoutmethod)
+	// config.DB.Save(&mock_data_methodtype)
+	// config.DB.Save(&mock_data_transaction)
 	config.DB.Save(&mock_data_booking)
 
 	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
