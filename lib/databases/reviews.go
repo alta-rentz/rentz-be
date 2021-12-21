@@ -33,3 +33,12 @@ func GetBookingOwner(id int) (int, error) {
 	}
 	return userID, nil
 }
+
+func GetBookingStatus(id int) (string, error) {
+	var statusPayment string
+	tx := config.DB.Raw("SELECT status_payment FROM bookings WHERE id = ?", id).Scan(&statusPayment)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return "", tx.Error
+	}
+	return statusPayment, nil
+}
