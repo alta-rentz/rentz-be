@@ -46,10 +46,11 @@ func CreateBookingControllers(c echo.Context) error {
 	databases.AccumulatedDays(input.Time_In, input.Time_Out, rent.ID)
 	input.Total = databases.AddPriceBooking(input.ProductsID, rent.ID)
 
+	hasil, _ := databases.GetBookingById(int(rent.ID))
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"status":  "success",
 		"message": "success create new booking",
-		"idBook":  rent,
+		"idBook":  hasil,
 	})
 }
 

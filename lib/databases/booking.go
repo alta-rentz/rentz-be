@@ -40,13 +40,14 @@ func AddPriceBooking(idProduct, idBooking uint) int {
 }
 
 // Fungsi untuk mendapatkan informasi booking by id
-func GetBookingById(id int) (*models.Booking, error) {
+func GetBookingById(id int) (*models.GetBookingDetail, error) {
 	var rent models.Booking
-	tx := config.DB.Where("id = ?", id).Find(&rent)
+	var rentdetail models.GetBookingDetail
+	tx := config.DB.Model(rent).Where("id = ?", id).Find(&rentdetail)
 	if tx.Error != nil || tx.RowsAffected < 1 {
 		return nil, tx.Error
 	}
-	return &rent, nil
+	return &rentdetail, nil
 }
 
 // Fungsi untuk menghapus booking
