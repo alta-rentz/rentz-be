@@ -199,3 +199,11 @@ func BookingNotFoundResponse() map[string]interface{} {
 	}
 	return result
 }
+
+func BookingOwnProductsFailed() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "Cannot booking own products",
+	}
+	return result
+}

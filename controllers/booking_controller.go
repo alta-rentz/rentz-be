@@ -33,6 +33,11 @@ func CreateBookingControllers(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.DateInvalidResponse())
 	}
 
+	ownProduct, _ := databases.GetProductOwner(int(body.ProductsID))
+	if logged == ownProduct {
+		return c.JSON(http.StatusBadRequest, response.BookingOwnProductsFailed())
+	}
+
 	rent, err := databases.CreateBooking(input, int(cart.ID))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())

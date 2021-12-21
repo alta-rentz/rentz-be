@@ -26,7 +26,6 @@ func CreateProductControllers(c echo.Context) error {
 	var body models.BodyCreateProducts
 	c.Bind(&body)
 	logged := middlewares.ExtractTokenUserId(c)
-
 	// create input product
 	var product models.Products
 	spaceEmptyName := strings.TrimSpace(body.Name)
