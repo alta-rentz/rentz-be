@@ -8,7 +8,6 @@ type Transaction struct {
 	Booking []Booking `gorm:"foreignKey:TransactionID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }
 
-//
 type CheckOut struct {
 	User_ID        int    `json:"user_id" form:"user_id"`
 	CheckoutMethod string `json:"checkout_method" form:"checkout_method"`
@@ -17,7 +16,6 @@ type CheckOut struct {
 	Phone          string `json:"phone" form:"phone"`
 }
 
-//
 type RequestBodyStruct struct {
 	ReferenceID       string            `json:"reference_id" validate:"required"`
 	Currency          string            `json:"currency" validate:"required"`
@@ -28,18 +26,15 @@ type RequestBodyStruct struct {
 	Metadata          Metadata          `json:"metadata" validate:"required"`
 }
 
-//
 type Metadata struct {
 	BranchArea string `json:"branch_area" validate:"required"`
 	BranchCity string `json:"branch_city" validate:"required"`
 }
 
-//
 type ChannelProperties struct {
 	Success_redirect_url string `json:"success_redirect_url" validate:"required"`
 }
 
-//
 type BasketItem struct {
 	ReferenceID string                 `json:"reference_id" validate:"required"`
 	Name        string                 `json:"name" validate:"required"`
