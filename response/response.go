@@ -199,3 +199,40 @@ func BookingNotFoundResponse() map[string]interface{} {
 	}
 	return result
 }
+
+func CheckoutSuccessResponse(data, payment interface{}) map[string]interface{} {
+	result := map[string]interface{}{
+		"code":        http.StatusOK,
+		"message":     "Your CheckOut Success",
+		"checkout_id": data,
+		"payment":     payment,
+	}
+	return result
+}
+
+func CheckoutSuccessResponseOVO(data, payment interface{}) map[string]interface{} {
+	result := map[string]interface{}{
+		"code":        http.StatusOK,
+		"message":     "Your CheckOut Success",
+		"checkout_id": data,
+		"payment":     payment,
+	}
+	return result
+}
+
+func CheckoutCODSuccessResponse(data interface{}) map[string]interface{} {
+	result := map[string]interface{}{
+		"code":        http.StatusOK,
+		"message":     "Your CheckOut Success",
+		"checkout_id": data,
+	}
+	return result
+}
+
+func CheckOutMissingResponse() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "You Must Choose Payment Method",
+	}
+	return result
+}
