@@ -31,6 +31,7 @@ func CreateCheckoutController(c echo.Context) error {
 	var totPrice int
 	for i := 0; i < len(bookings); i++ {
 		totPrice += bookings[i].Total
+		fmt.Println(bookings[i].Total)
 		fmt.Println(totPrice)
 	}
 	if totPrice < 1 {
