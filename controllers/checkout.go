@@ -43,7 +43,7 @@ func CreateCheckoutController(c echo.Context) error {
 		fmt.Println(totPrice)
 	}
 
-	if totPrice > 10000000 {
+	if totPrice > 10000000 && (input.CheckoutMethod == "ID_DANA" || input.CheckoutMethod == "ID_LINKAJA" || input.CheckoutMethod == "ID_SHOPEEPAY") {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"status":  "failed",
 			"message": "Your Billing Exceed 10,000,000 ",
@@ -59,6 +59,10 @@ func CreateCheckoutController(c echo.Context) error {
 
 	if input.CheckoutMethod == "" {
 		return c.JSON(http.StatusBadRequest, response.CheckOutMissingResponse())
+	}
+
+	if input.CheckoutMethod == "COD" {
+		return c.JSON(http.StatusOK, response.CheckoutCODSuccessResponse(CheckOut.ID))
 	}
 	// Payment Xendit
 	var body2 = models.RequestBodyStruct{
@@ -80,10 +84,6 @@ func CreateCheckoutController(c echo.Context) error {
 	reqBody, err := json.Marshal(body2)
 	if err != nil {
 		print(err)
-	}
-
-	if input.CheckoutMethod == "COD" {
-		return c.JSON(http.StatusOK, response.CheckoutCODSuccessResponse(CheckOut.ID))
 	}
 
 	req, _ := http.NewRequest(http.MethodPost, "https://api.xendit.co/ewallets/charges", bytes.NewBuffer(reqBody))

@@ -69,6 +69,32 @@ func UpdateUserControllers(c echo.Context) error {
 	user := models.Users{}
 	id := middlewares.ExtractTokenUserId(c)
 	c.Bind(&user)
+	spaceEmpty := strings.TrimSpace(user.Nama)
+	if user.Nama == "" && user.Email == "" && user.Password == "" && user.Phone_Number == "" {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if user.Password == "" {
+		return c.JSON(http.StatusBadRequest, response.PasswordCannotEmpty())
+	}
+	if len(user.Password) < 5 {
+		return c.JSON(http.StatusBadRequest, response.PasswordCannotLess5())
+	}
+	newPass, _ := plugins.Encrypt(user.Password)
+	user.Password = newPass
+	if spaceEmpty == "" {
+		return c.JSON(http.StatusBadRequest, response.NameCannotEmpty())
+	}
+	if user.Email == "" {
+		return c.JSON(http.StatusBadRequest, response.EmailCannotEmpty())
+	}
+	if user.Phone_Number == "" {
+		return c.JSON(http.StatusBadRequest, response.PhoneNumberCannotEmpty())
+	}
+	pattern := `^\w+@\w+\.\w+$`
+	matched, _ := regexp.Match(pattern, []byte(user.Email))
+	if !matched {
+		return c.JSON(http.StatusBadRequest, response.FormatEmailInvalid())
+	}
 	_, err := databases.UpdateUser(id, &user)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
