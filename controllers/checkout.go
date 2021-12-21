@@ -24,6 +24,14 @@ func CreateCheckoutController(c echo.Context) error {
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
+
+	if input.Booking_ID == nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"status":  "failed",
+			"message": "Input Your Booking",
+		})
+	}
+
 	cart_id, _ := databases.GetCartId(user_id)
 	bookings, err := databases.GetBookings(input.Booking_ID, int(cart_id.ID))
 	if err != nil {
@@ -32,15 +40,16 @@ func CreateCheckoutController(c echo.Context) error {
 	var totPrice int
 	for i := 0; i < len(bookings); i++ {
 		totPrice += bookings[i].Total
-		fmt.Println(bookings[i].Total)
 		fmt.Println(totPrice)
 	}
-	if totPrice < 1 {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
+
+	if totPrice > 10000000 {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"status":  "failed",
-			"message": "product belum tersedia di cart",
+			"message": "Your Billing Exceed 10,000,000 ",
 		})
 	}
+
 	input.User_ID = user_id
 	input.Total = totPrice
 	CheckOut, err := databases.CreateCheckout(input)
@@ -109,6 +118,14 @@ func CreateCheckoutOVOController(c echo.Context) error {
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
+
+	if input.Booking_ID == nil {
+		return c.JSON(http.StatusNotFound, map[string]interface{}{
+			"status":  "failed",
+			"message": "Input Your Booking",
+		})
+	}
+
 	cart_id, _ := databases.GetCartId(user_id)
 	bookings, err := databases.GetBookings(input.Booking_ID, int(cart_id.ID))
 	if err != nil {
@@ -119,12 +136,13 @@ func CreateCheckoutOVOController(c echo.Context) error {
 		totPrice += bookings[i].Total
 		fmt.Println(totPrice)
 	}
-	if totPrice < 1 {
-		return c.JSON(http.StatusNotFound, map[string]interface{}{
+	if totPrice > 10000000 {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"status":  "failed",
-			"message": "product belum tersedia di cart",
+			"message": "Your Billing Exceed 10,000,000 ",
 		})
 	}
+
 	input.User_ID = user_id
 	input.Total = totPrice
 	CheckOut, err := databases.CreateCheckout(input)
