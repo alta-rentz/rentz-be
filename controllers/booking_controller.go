@@ -49,7 +49,7 @@ func CreateBookingControllers(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"status":  "success",
 		"message": "success create new booking",
-		"idBook":  rent.ID,
+		"idBook":  rent,
 	})
 }
 
