@@ -25,7 +25,7 @@ func CreateCheckoutController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
 
-	if input.Booking_ID == nil {
+	if len(input.Booking_ID) == 0 {
 		return c.JSON(http.StatusNotFound, map[string]interface{}{
 			"status":  "failed",
 			"message": "Input Your Booking",
