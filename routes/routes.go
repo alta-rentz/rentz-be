@@ -49,5 +49,9 @@ func New() *echo.Echo {
 	//Review JWT
 	r.POST("/reviews/:id", controllers.AddReviewsController)
 
+	// CheckOut JWT
+	r.POST("/checkout", controllers.CreateCheckoutController)
+	r.POST("/checkout/ovo", controllers.CreateCheckoutOVOController)
+
 	return e
 }
