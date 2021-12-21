@@ -82,7 +82,7 @@ func RentingSuccessResponse(data, payment interface{}) map[string]interface{} {
 func CheckFailedResponse() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusBadRequest,
-		"message": "Tool not available",
+		"message": "Item not available",
 	}
 	return result
 }
@@ -90,7 +90,7 @@ func CheckFailedResponse() map[string]interface{} {
 func CheckSuccessResponse() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusOK,
-		"message": "Tool available",
+		"message": "Item available",
 	}
 	return result
 }
@@ -196,6 +196,14 @@ func BookingNotFoundResponse() map[string]interface{} {
 	result := map[string]interface{}{
 		"code":    http.StatusBadRequest,
 		"message": "Booking not found",
+	}
+	return result
+}
+
+func BookingOwnProductsFailed() map[string]interface{} {
+	result := map[string]interface{}{
+		"code":    http.StatusBadRequest,
+		"message": "Cannot booking own products",
 	}
 	return result
 }
