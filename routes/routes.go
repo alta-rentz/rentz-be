@@ -46,6 +46,9 @@ func New() *echo.Echo {
 	r.GET("/cart", controllers.GetBookingByCartIDController)
 	r.DELETE("/booking/:id", controllers.CancelBookingController)
 
+	//Review JWT
+	r.POST("/reviews/:id", controllers.AddReviewsController)
+
 	// CheckOut JWT
 	r.POST("/checkout", controllers.CreateCheckoutController)
 	r.POST("/checkout/ovo", controllers.CreateCheckoutOVOController)
