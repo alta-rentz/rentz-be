@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"project3/lib/databases"
+	"project3/middlewares"
 	"project3/models"
 	"project3/response"
 	"strconv"
@@ -18,18 +19,30 @@ func AddReviewsController(c echo.Context) error {
 	var review models.Reviews
 	c.Bind(&review)
 	review.BookingID = uint(bookingId)
+	userId := middlewares.ExtractTokenUserId(c)
+	bookingOwner, err := databases.GetBookingOwner(int(review.BookingID))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	// tambahin kondisi kalau bookingnya udah ada di tabel review, 1 booking 1 review
+	if bookingOwner != userId {
+		return c.JSON(http.StatusBadRequest, response.AccessForbiddenResponse())
+	}
 	if review.Rating <= 0 || review.Rating > 5 {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"code":    http.StatusBadRequest,
 			"message": "please choose between 1 - 5",
 		})
 	}
-	productID, err := databases.GetProductID(int(review.BookingID))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
-	}
+	productID, _ := databases.GetProductID(int(review.BookingID))
 	review.ProductsID = uint(productID)
 	_, err = databases.AddReviews(&review)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"code":    http.StatusBadRequest,
+			"message": "you have already reviewed this booking",
+		})
+	}
 	databases.AddRatingToProduct(int(review.ProductsID))
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())

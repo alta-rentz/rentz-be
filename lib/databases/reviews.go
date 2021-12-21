@@ -7,7 +7,7 @@ import (
 
 func AddReviews(review *models.Reviews) (interface{}, error) {
 	if err := config.DB.Create(&review).Error; err != nil {
-		return err, nil
+		return nil, err
 	}
 	return review, nil
 }
@@ -27,7 +27,7 @@ func GetProductID(id int) (int, error) {
 
 func GetBookingOwner(id int) (int, error) {
 	var userID int
-	tx := config.DB.Raw("SELECT users_id FROM bookings WHERE id = ?", id).Scan(&userID)
+	tx := config.DB.Raw("SELECT carts.users_id FROM bookings JOIN carts ON bookings.cart_id = carts.id WHERE bookings.id = ?", id).Scan(&userID)
 	if tx.Error != nil || tx.RowsAffected < 1 {
 		return 0, tx.Error
 	}
