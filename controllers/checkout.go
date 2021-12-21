@@ -24,7 +24,8 @@ func CreateCheckoutController(c echo.Context) error {
 	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
-	bookings, err := databases.GetBookings(input.Booking_ID, user_id)
+	cart_id, _ := databases.GetCartId(user_id)
+	bookings, err := databases.GetBookings(input.Booking_ID, int(cart_id.ID))
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, response.BookingNotFoundResponse())
 	}
