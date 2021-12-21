@@ -10,6 +10,7 @@ type Booking struct {
 	gorm.Model
 	ProductsID     uint      `json:"product_id" form:"product_id"`
 	CartID         uint      `json:"cart_id" form:"cart_id"`
+	UsersID        uint      `json:"user_id" form:"user_id"`
 	TransactionID  *uint     `json:"transaction_id" form:"transaction_id"`
 	Time_In        time.Time `gorm:"type:datetime;not null" json:"time_in" form:"time_in"`
 	Time_Out       time.Time `gorm:"type:datetime;not null" json:"time_out" form:"time_out"`
