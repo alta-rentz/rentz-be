@@ -21,9 +21,9 @@ func InitDB() {
 		log.Fatal(err)
 		log.Fatal("Error loading .env file")
 	}
-	// -----------
-	// config := os.Getenv("CONNECTION_STRING")
-	config := os.Getenv("CONNECTION_LOCAL")
+	// ------------
+	config := os.Getenv("CONNECTION_STRING")
+	// config := os.Getenv("CONNECTION_LOCAL")
 	API_KEY = os.Getenv("API_KEY")
 
 	// viper.SetConfigFile(".env")
