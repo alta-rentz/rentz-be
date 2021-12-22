@@ -40,11 +40,10 @@ func CreateProductControllers(c echo.Context) error {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Price must be more than 0"))
 	}
 	product.Price = body.Price
-	spaceEmptyDesc := strings.TrimSpace(body.Description)
-	if spaceEmptyDesc == "" {
+	product.Description = strings.TrimSpace(body.Description)
+	if product.Description == "" {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add description"))
 	}
-	product.Description = spaceEmptyDesc
 	product.Stock = body.Stock
 	if body.Stock <= 0 {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Stock must be more than 0"))
