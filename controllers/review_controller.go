@@ -24,10 +24,15 @@ func AddReviewsController(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
 	}
-	// tambahin kondisi kalau bookingnya udah ada di tabel review, 1 booking 1 review
+
 	if bookingOwner != userId {
 		return c.JSON(http.StatusBadRequest, response.AccessForbiddenResponse())
 	}
+	bookingStatus, _ := databases.GetBookingStatus(int(review.BookingID))
+	if bookingStatus == "waiting" {
+		return c.JSON(http.StatusBadRequest, response.AccessForbiddenResponse())
+	}
+
 	if review.Rating <= 0 || review.Rating > 5 {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"code":    http.StatusBadRequest,
