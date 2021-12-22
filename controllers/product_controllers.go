@@ -31,21 +31,21 @@ func CreateProductControllers(c echo.Context) error {
 	spaceEmptyName := strings.TrimSpace(body.Name)
 	product.Name = strings.TrimRight(spaceEmptyName, "\r\n")
 	if product.Name == "" {
-		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add product name"))
+		return c.JSON(http.StatusBadRequest, response.ProductsBadGatewayResponse("Must add product name"))
 	}
 	product.SubcategoryID = body.SubcategoryID
 	product.CityID = body.CityID
 	if body.Price <= 0 {
-		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Price must be more than 0"))
+		return c.JSON(http.StatusBadRequest, response.ProductsBadGatewayResponse("Price must be more than 0"))
 	}
 	product.Price = body.Price
 	product.Description = strings.TrimSpace(body.Description)
 	if product.Description == "" {
-		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add description"))
+		return c.JSON(http.StatusBadRequest, response.ProductsBadGatewayResponse("Must add description"))
 	}
 	product.Stock = body.Stock
 	if body.Stock <= 0 {
-		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Stock must be more than 0"))
+		return c.JSON(http.StatusBadRequest, response.ProductsBadGatewayResponse("Stock must be more than 0"))
 	}
 	product.UsersID = uint(logged)
 	getCity, _ := databases.GetCity(product.CityID)
@@ -70,7 +70,7 @@ func CreateProductControllers(c echo.Context) error {
 
 	files := form.File["photos"]
 	if files == nil {
-		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("must add photo"))
+		return c.JSON(http.StatusBadRequest, response.ProductsBadGatewayResponse("must add photo"))
 	}
 
 	createdProduct, err := databases.CreateProduct(&product)
