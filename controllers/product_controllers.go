@@ -29,11 +29,10 @@ func CreateProductControllers(c echo.Context) error {
 	// create input product
 	var product models.Products
 	spaceEmptyName := strings.TrimSpace(body.Name)
-	noEnterName := strings.TrimRight(spaceEmptyName, "\r\n")
-	if noEnterName == "" {
+	product.Name = strings.TrimRight(spaceEmptyName, "\r\n")
+	if product.Name == "" {
 		return c.JSON(http.StatusBadGateway, response.ProductsBadGatewayResponse("Must add product name"))
 	}
-	product.Name = noEnterName
 	product.SubcategoryID = body.SubcategoryID
 	product.CityID = body.CityID
 	if body.Price <= 0 {

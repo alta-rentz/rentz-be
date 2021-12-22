@@ -186,7 +186,7 @@ func UploadErrorResponse(err error) map[string]interface{} {
 
 func ProductsBadGatewayResponse(message string) map[string]interface{} {
 	result := map[string]interface{}{
-		"code":    http.StatusBadGateway,
+		"code":    http.StatusBadRequest,
 		"message": message,
 	}
 	return result
