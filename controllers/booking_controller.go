@@ -33,6 +33,19 @@ func CreateBookingControllers(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.DateInvalidResponse())
 	}
 
+	// Mendapatkan seluruh tanggal rental product tertentu
+	dateList, err := databases.ProductRentList(int(input.ProductsID))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+
+	// Pengecekan ketersediaan product untuk tanggal time_in dan time_out yang diinginkan
+	for _, date := range dateList {
+		if (input.Time_In.Unix() >= date.Time_In.Unix() && input.Time_In.Unix() <= date.Time_Out.Unix()) || (input.Time_Out.Unix() >= date.Time_In.Unix() && input.Time_Out.Unix() <= date.Time_Out.Unix()) {
+			return c.JSON(http.StatusBadRequest, response.CheckFailedResponse())
+		}
+	}
+
 	ownProduct, _ := databases.GetProductOwner(int(body.ProductsID))
 	if logged == ownProduct {
 		return c.JSON(http.StatusBadRequest, response.BookingOwnProductsFailed())
