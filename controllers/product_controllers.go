@@ -26,9 +26,10 @@ func CreateProductControllers(c echo.Context) error {
 	var body models.BodyCreateProducts
 	c.Bind(&body)
 	logged := middlewares.ExtractTokenUserId(c)
+
 	// create input product
 	var product models.Products
-	spaceEmptyName := strings.TrimSpace(product.Name)
+	spaceEmptyName := strings.TrimSpace(body.Name)
 	product.Name = strings.TrimRight(spaceEmptyName, "\r\n")
 	if product.Name == "" {
 		return c.JSON(http.StatusBadRequest, response.ProductsBadGatewayResponse("Must add product name"))
@@ -39,7 +40,7 @@ func CreateProductControllers(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.ProductsBadGatewayResponse("Price must be more than 0"))
 	}
 	product.Price = body.Price
-	product.Description = strings.TrimSpace(product.Description)
+	product.Description = strings.TrimSpace(body.Description)
 	if product.Description == "" {
 		return c.JSON(http.StatusBadRequest, response.ProductsBadGatewayResponse("Must add description"))
 	}

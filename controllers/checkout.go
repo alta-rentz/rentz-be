@@ -150,6 +150,14 @@ func CreateCheckoutOVOController(c echo.Context) error {
 		totPrice += bookings[i].Total
 		fmt.Println(totPrice)
 	}
+
+	if totPrice == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"status":  "failed",
+			"message": "Your Booking Already Paid",
+		})
+	}
+
 	if totPrice > 10000000 {
 		return c.JSON(http.StatusBadRequest, map[string]interface{}{
 			"status":  "failed",

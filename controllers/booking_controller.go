@@ -112,6 +112,22 @@ func GetBookingByCartIDController(c echo.Context) error {
 	return c.JSON(http.StatusOK, response.SuccessResponseData(rent))
 }
 
+func GetHistoryByCartIDController(c echo.Context) error {
+	logged := middlewares.ExtractTokenUserId(c)
+	cart, err := databases.GetCartId(logged)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	rent, err := databases.GetHistoryByCartID(int(cart.ID))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if rent == nil {
+		return c.JSON(http.StatusBadRequest, response.BookingNotFoundResponse())
+	}
+	return c.JSON(http.StatusOK, response.SuccessResponseData(rent))
+}
+
 type BodyDate struct {
 	Time_In  string `json:"time_in" form:"time_in"`
 	Time_Out string `json:"time_out" form:"time_out"`

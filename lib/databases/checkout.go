@@ -7,7 +7,7 @@ import (
 
 func GetBooking(booking_id int, cart_id int) (*models.Booking, error) {
 	cart := models.Booking{}
-	if err := config.DB.Where("id=? AND cart_id=? AND status_payment='waiting'", booking_id, cart_id).Find(&cart).Error; err != nil {
+	if err := config.DB.Where("id=? AND cart_id=? AND status_payment= \"waiting\"", booking_id, cart_id).Find(&cart).Error; err != nil {
 		return nil, err
 	}
 	return &cart, nil
