@@ -67,17 +67,16 @@ dilengkapi dengan berbagai fitur yang memungkinkan user untuk mengakses data yan
 | --- | --- |
   --->
   
-  Homestay pada tabel ini user dapat mencari homestay atau hotel, untuk memudahkan pencarian, developer menambahkan beberapa fitur seperti getHomestayByKota, getHomestayByRating. 
-  selain mencari hotel, tentunya user dapat menghosting hotel, Homestay atau villa untuk dibooking oleh user lain.
+User dapat mem-posting berbagai product untuk disewakan kepada user lain, terdapat beberapa fitur seperti melihat seluruh product, mencari product sesuai dengan id product, melihat product yang dipost user, menambahkan dan meng-update product dengan detail harga, stok untuk memudahkan user lain yang akan membeli productnya, serta fitur delete yang memungkinkan user menghapus product yang sudah tidak dijual.
   
-| Feature Homestay | Endpoint | Param | JWT Token | Fungsi |
+| Feature Products | Endpoint | Param | JWT Token | Fungsi |
 | --- | --- | --- | --- | --- |
-| POST | /homestays  | - | YES | Membuat homestay baru |
-| GET | /homestays | - | YES | Mendapatkan informasi seluruh homestay |
-| GET | /homestays/:id | id | NO | Mendapatkan informasi homestay berdasarkan homestay id |
-| GET | /homestays/nama_kota | id_kota | NO | Mendapatkan informasi homestay berdasarkan kota |
-| PUT | /homestays/:id | id | YES | Melakukan update homestay tertentu berdasarkan id homestay |
-| DEL | /homestays/:id | id | YES | Melakukan delete homestay tertentu berdasarkan id homestay |
+| POST | /products  | - | YES | Membuat Product sewa baru |
+| GET | /products | - | NO | Mendapatkan informasi seluruh product |
+| GET | /products | - | YES | Mendapatkan informasi seluruh product user yang sedang login |
+| GET | /products/:id | id | NO | Mendapatkan informasi product berdasarkan product id |
+| GET | /products/subcategory/:id | id | NO | Mendapatkan informasi product berdasarkan subcategories |
+| DEL | /products/:id | id | YES | Melakukan delete product tertentu berdasarkan id product |
 
 </details>
 
@@ -89,17 +88,12 @@ dilengkapi dengan berbagai fitur yang memungkinkan user untuk mengakses data yan
   | Command | Description |
 | --- | --- |
   --->
-  User dapat mem-posting berbagai room untuk disewakan kepada user lain, sebagai hoster user dapat menambahkan berbagai fasilitas persetiap room, guna mempermudah user lain dalam memilih room sesuai dengan fasilitas yang dikehendaki, adapun fitur GetUserByHomestayId, sebagai hoster user bisa mengupload, edit serta delete.
+Cart merupakan fitur untuk menampung berbagai product yang akan dibeli oleh user, adapun fiturnya ada GET dimana user bisa melihat barang apa aja yang ada di dalam keranjang, ada fitur history dimana user bisa melihat jumlah product yang sudah dibayar.
   
-| Feature Room | Endpoint | Param | JWT Token | Fungsi |
+| Feature cart | Endpoint | Param | JWT Token | Fungsi |
 | --- | --- | --- | --- | --- |
-| POST | /rooms:id | id | YES | Membuat room baru di homestay tertentu |
-| GET | /rooms | - | NO | Mendapatkan informasi seluruh room |
-| GET | /rooms/homestays/:id | id | NO | Mendapatkan informasi room di homestay berdasarkan homestay id |
-| POST | /rooms:id | id | NO | Mendapatkan detail room tertentu berdasarkan room id |
-| POST | /rooms/upload | - | YES | Melakukan upload foto room |
-| PUT | /homestays/:id | id | YES | Melakukan update room tertentu berdasarkan room id |
-| DEL | /homestays/:id | id | YES | Melakukan delete room tertentu berdasarkan room id |
+| GET | /cart | - | YES | Mendapatkan informasi booking yang ada didalam cart |
+| GET | /history | - | YES | Mendapatkan informasi booking yang telah dibayar |
 
 </details>
 
@@ -110,14 +104,14 @@ dilengkapi dengan berbagai fitur yang memungkinkan user untuk mengakses data yan
   | Command | Description |
 | --- | --- |
   --->
-Setelah user melakukan pemilihan homestay dan melihat room dengan berbagai fasilitas yang ditawarkan, user melakukan reservation dengan melakukan pengecekan tanggal diawal, jika sistem merespon room yang dimaksud "avalaible", user baru dapat melakukan reservation. Adapun fitur dalam reservation CheckAvailable, GetReservationById   
+Setelah user melakukan pencarian product yang dibutuhkan dengan berbagai jaminan yang dibutuhkan, user melakukan booking dengan melakukan pengecekan tanggal diawal, jika sistem merespon product yang dimaksud "avalaible", user baru dapat melakukan booking.  
   
-| Feature Reservaton | Endpoint | Param | JWT Token | Fungsi |
+| Feature booking | Endpoint | Param | JWT Token | Fungsi |
 | --- | --- | --- | --- | --- |
-| POST | /rooms/check/:id | id | YES | Melakukan cek ketersediaan room tertentu berdasarkan tanggal check-in dan check-out |
-| POST | /reservations | - | YES | Membuat reservasi room |
-| GET | /reservations/:id | id | YES | Mendapatkan informasi reservasi berdasarkan reservation id |
-| DEL | /reservations/:id | id | YES | Melakukan cancel reservasi berdasarkan reservation id |
+| POST | /booking/check/:id | id | YES | Melakukan cek ketersediaan product tertentu berdasarkan tanggal time-in dan time-out |
+| POST | /booking | - | YES | Membuat booking product |
+| GET | /booking/:id | id | YES | Mendapatkan informasi booking berdasarkan booking id |
+| DEL | /booking/:id | id | YES | Melakukan cancel booking berdasarkan booking id |
 
 </details>
 
@@ -128,11 +122,11 @@ Setelah user melakukan pemilihan homestay dan melihat room dengan berbagai fasil
   | Command | Description |
 | --- | --- |
   --->
-  Review adalah fitur untuk user menuliskan komentar terkait pelayanan dan kondisi kelayakan kamar, sebagai feedback user kepada homestay terkait yang bertujuan untuk memperbaiki serta mempertahan kualitas pelayanan kamar.
+ Merupakan fitur untuk dimana user melakukan pembayaran sesuai product yang dipilih dari cart, adapun payment gateway yang digunakan adalah xendit, payment_method yang digunakan ewallet dengan 4 channel, DANA, OVO, LINKAJA, dan SHOPEEPAY
   
 | Feature Reservaton | Endpoint | Param | JWT Token | Fungsi |
 | --- | --- | --- | --- | --- |
-| POST | /reviews | - | YES | Membuat review homestay |
+| POST | /c | - | YES | Membuat review homestay |
 
 </details>
       
