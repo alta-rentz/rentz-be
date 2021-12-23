@@ -100,3 +100,14 @@ func GetHargaRoom(idRoom int) (int, error) {
 	}
 	return harga, nil
 }
+
+func GetPhotoURL(idBooking int) (string, error) {
+	var photo string
+	tx := config.DB.Table("photos").Select("photos.url").Joins(
+		"join products on products_id = products.id").Joins(
+		"join bookings on bookings.id = bookings.id").Where("bookings.id = ?", idBooking).Find(&photo)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return "", tx.Error
+	}
+	return photo, nil
+}

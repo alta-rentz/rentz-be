@@ -108,6 +108,7 @@ func GetBookingByCartIDController(c echo.Context) error {
 	if rent == nil {
 		return c.JSON(http.StatusBadRequest, response.BookingNotFoundResponse())
 	}
+	// photo, _ := databases.GetPhotoURL(int(cart.ID))
 	return c.JSON(http.StatusOK, response.SuccessResponseData(rent))
 }
 
