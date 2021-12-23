@@ -76,6 +76,15 @@ func GetBookingByCartID(id int) (interface{}, error) {
 	return booking, nil
 }
 
+func GetHistoryByCartID(id int) (interface{}, error) {
+	var booking []models.GetBookingDetail
+	tx := config.DB.Model(models.Booking{}).Where("cart_id=? AND status_payment = \"succes\"", id).Find(&booking)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return nil, tx.Error
+	}
+	return booking, nil
+}
+
 type RentDate struct {
 	Time_In  time.Time
 	Time_Out time.Time

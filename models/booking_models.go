@@ -36,11 +36,12 @@ type GetBooking struct {
 }
 
 type GetBookingDetail struct {
-	ID         uint
-	ProductsID uint
-	Time_In    string
-	Time_Out   string
-	Total_Day  int
-	Qty        int
-	Total      int
+	ID             uint
+	ProductsID     uint
+	Time_In        string
+	Time_Out       string
+	Total_Day      int
+	Qty            int
+	Total          int
+	Status_Payment string
 }
