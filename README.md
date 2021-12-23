@@ -126,7 +126,8 @@ Setelah user melakukan pencarian product yang dibutuhkan dengan berbagai jaminan
   
 | Feature Reservaton | Endpoint | Param | JWT Token | Fungsi |
 | --- | --- | --- | --- | --- |
-| POST | /c | - | YES | Membuat review homestay |
+| POST | /checkout | - | YES | Melakukan Checkout |
+| POST | /checkout/ovo | - | YES | Melakukan Checkout melalui channel OVO |
 
 </details>
       
