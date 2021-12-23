@@ -110,6 +110,7 @@ func GetHargaRoom(idRoom int) (int, error) {
 	return harga, nil
 }
 
+// get photo by id booking
 func GetPhotoURL(idBooking int) (string, error) {
 	var photo string
 	tx := config.DB.Table("photos").Select("photos.url").Joins(
