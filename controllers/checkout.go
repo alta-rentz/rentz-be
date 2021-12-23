@@ -79,7 +79,7 @@ func CreateCheckoutController(c echo.Context) error {
 		CheckoutMethod: "ONE_TIME_PAYMENT",
 		ChannelCode:    input.CheckoutMethod,
 		ChannelProperties: models.ChannelProperties{
-			Success_redirect_url: "https://rentz-id.site/helloxendit",
+			Success_redirect_url: "https://rentzid-f00f3.web.app/keranjang",
 		},
 
 		Metadata: models.Metadata{
