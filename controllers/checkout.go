@@ -79,7 +79,7 @@ func CreateCheckoutController(c echo.Context) error {
 		CheckoutMethod: "ONE_TIME_PAYMENT",
 		ChannelCode:    input.CheckoutMethod,
 		ChannelProperties: models.ChannelProperties{
-			Success_redirect_url: "https://redirect.me/payment",
+			Success_redirect_url: "https://rentz-id.site/helloxendit",
 		},
 
 		Metadata: models.Metadata{
@@ -117,6 +117,13 @@ func CreateCheckoutController(c echo.Context) error {
 	json.Unmarshal([]byte(body4), &responsePayment)
 	// respon
 	return c.JSON(http.StatusOK, response.CheckoutSuccessResponse(CheckOut.ID, responsePayment))
+}
+
+func HelloXendit(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "helloo xendit",
+	})
+
 }
 
 func CreateCheckoutOVOController(c echo.Context) error {

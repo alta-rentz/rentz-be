@@ -53,6 +53,7 @@ func New() *echo.Echo {
 	// CheckOut JWT
 	r.POST("/checkout", controllers.CreateCheckoutController)
 	r.POST("/checkout/ovo", controllers.CreateCheckoutOVOController)
+	e.GET("/helloxendit", controllers.HelloXendit)
 
 	return e
 }
