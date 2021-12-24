@@ -65,7 +65,7 @@ func CancelBooking(id int) (interface{}, error) {
 
 func GetCartId(user_id int) (models.Cart, error) {
 	var cart models.Cart
-	if err := config.DB.Where("users_id=? and deleted_at is null", user_id).Find(&cart).Error; err != nil {
+	if err := config.DB.Where("users_id=?", user_id).Find(&cart).Error; err != nil {
 		return cart, err
 	}
 	return cart, nil
@@ -73,7 +73,7 @@ func GetCartId(user_id int) (models.Cart, error) {
 
 func GetBookingByCartID(id int) (interface{}, error) {
 	var booking []models.GetBookingDetail
-	tx := config.DB.Table("bookings").Where("cart_id=? AND status_payment = \"waiting\"", id).Find(&booking)
+	tx := config.DB.Table("bookings").Where("cart_id=? AND deleted_at is null AND status_payment = \"waiting\"", id).Find(&booking)
 	if tx.Error != nil || tx.RowsAffected < 1 {
 		return nil, tx.Error
 	}
