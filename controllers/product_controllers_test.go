@@ -253,42 +253,42 @@ func TestGetProductsByIDControllerSuccess(t *testing.T) {
 
 }
 
-// // Fungsi untuk melakukan testing fungsi GetProductByIDControllers
-// // kondisi request failed
-// func TestGetProductsByIDControllerFalseParam(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "false param to get one data product by id",
-// 		Path:       "/products/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductByIDControllers
+// kondisi request failed
+func TestGetProductsByIDControllerFalseParam(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "false param to get one data product by id",
+		Path:       "/products/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEcho()
+	e := InitEcho()
 
-// 	InsertMockDataToDB()
-// 	config.DB.Save(&mock_data_product)
-// 	config.DB.Save(&mock_data_product_guarantee)
-// 	config.DB.Save(&mock_data_photo)
+	InsertMockDataToDB()
+	config.DB.Save(&mock_data_product)
+	config.DB.Save(&mock_data_product_guarantee)
+	config.DB.Save(&mock_data_photo)
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("!")
+	req := httptest.NewRequest(http.MethodGet, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("!")
 
-// 	if assert.NoError(t, GetProductByIDController(context)) {
-// 		res_body := res.Body.String()
-// 		var response ProductsResponse
-// 		er := json.Unmarshal([]byte(res_body), &response)
-// 		if er != nil {
-// 			assert.Error(t, er, "error")
-// 		}
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "False Param", response.Message)
-// 	}
+	if assert.NoError(t, GetProductByIDController(context)) {
+		res_body := res.Body.String()
+		var response ProductsResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "False Param", response.Message)
+	}
 
-// }
+}
 
 // // Fungsi untuk melakukan testing fungsi GetProductByIDControllers
 // // kondisi request failed
