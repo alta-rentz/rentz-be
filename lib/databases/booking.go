@@ -65,7 +65,7 @@ func CancelBooking(id int) (interface{}, error) {
 
 func GetCartId(user_id int) (models.Cart, error) {
 	var cart models.Cart
-	if err := config.DB.Where("users_id=?", user_id).Find(&cart).Error; err != nil {
+	if err := config.DB.Where("users_id=? and deleted_at is null", user_id).Find(&cart).Error; err != nil {
 		return cart, err
 	}
 	return cart, nil
