@@ -144,7 +144,7 @@ func CreateProductControllers(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"code":       http.StatusOK,
-		"product id": createdProduct.ID,
+		"product_id": createdProduct.ID,
 		"message":    "product created and file uploaded successfully",
 	})
 }
