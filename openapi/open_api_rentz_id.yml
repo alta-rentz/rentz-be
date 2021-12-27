@@ -15,9 +15,9 @@ servers:
   # Added by API Auto Mocking Plugin
   # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/altabe4/Rentz.id/1.0.1
+    url: https://virtserver.swaggerhub.com/Alta_Be_4/Rentz.id/1.0.1
   - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/iffakhry/alta-api/1.0.0
+    url: https://virtserver.swaggerhub.com/altabe4/Rentz.id/1.0.1
     variables:
       environment: 
         default: dev
@@ -35,6 +35,8 @@ tags:
     description: Booking data management
   - name: Check Out
     description: Checkout data management
+  - name: Cart
+    description: Cart data management
 paths:
   /login:
     post:
@@ -315,8 +317,6 @@ paths:
                     code: 400,
                     message: "Bad Request"
                   }
-  
-  
   ####################################
   #  PRODUCT
   ####################################
@@ -333,7 +333,7 @@ paths:
             schema:
               type: object
               properties:
-                nama:
+                name:
                   type: string
                   example: Playstation 5
                 sub_category:
@@ -342,7 +342,7 @@ paths:
                 city_id:
                   type: integer
                   example: 3303
-                harga:
+                price:
                   type: integer
                   example: 250000
                 guarantee:
@@ -350,7 +350,7 @@ paths:
                   items:
                     type: integer
                     example: [1,2,3]
-                des:
+                description:
                   type: string
                   example: sewa ps5 gratis
                 stock:
@@ -368,7 +368,7 @@ paths:
                   description: response success 1
                   value: {
                     code: 200,
-                    message: "Successful Operation",
+                    message: "product created and file uploaded successfully",
                   }
         '400':
           description: Failed Response
@@ -381,26 +381,42 @@ paths:
                   description: response failed 1
                   value: {
                     code: 400,
-                    message: "nama tidak boleh kosong",
+                    message: "must add product name",
                   }
                 responseData2:
                   description: response failed 2
                   value: {
                     code: 400,
-                    message: "harga tidak boleh kosong",
+                    message: "Price must be more than 0",
                   }
                 responseData3:
                   description: response failed 3
                   value: {
                     code: 400,
-                    message: "stok tidak boleh kosong",
+                    message: "Must add description",
+                  }
+                responseData4:
+                  description: response failed 4
+                  value: {
+                    code: 400,
+                    message: "Stock must be more than 0",
+                  }
+                responseData5:
+                  description: response failed 5
+                  value: {
+                    code: 400,
+                    message: "The uploaded image is too big. Please use an image less than 1MB in size",
+                  }
+                responseData6:
+                  description: response failed 6
+                  value: {
+                    code: 400,
+                    message: "The provided file format is not allowed. Please upload a JPG or JPEG or PNG image",
                   }
     get:
       tags:
         - Product
       description: Get all product
-      security:
-        - JWTAuth: []
       responses:
         '200':
           description: Success Response
@@ -416,11 +432,14 @@ paths:
                     message: "Successful Operation",
                     data: {
                       id: 1,
-                      nama: Playstation 5,
-                      sub_category: Playstation,
+                      usersid: 1,
+                      name: Playstation 5,
+                      subcategory_name: Lain-lain,
+                      subcategory_id: 207,
                       city_id: 3303,
-                      harga: 250000,
-                      des: sewa ps5 gratis,
+                      city_name: KABUPATEN PURBALINGGA,
+                      price: 250000,
+                      description: sewa ps5 gratis,
                       stock: 9,
                     }
                   }
@@ -448,8 +467,6 @@ paths:
       tags:
         - Product
       description: Search product by id
-      security:
-        - JWTAuth: []
       parameters:
         - name: id
           description: id product
@@ -472,15 +489,23 @@ paths:
                     code: 200,
                     message: "Successful Operation",
                     data: {
-                      product_id: 1,
-                      cart_id: 12,
-                      nama: Playstation 5,
-                      sub_category: Playstation,
+                      id: 1,
+                      usersid: 1,
+                      created_at: 2021-12-24T17:43:54.199Z,
+                      nama: Fafa Ganskuy,
+                      phone_number: 08123456789,
+                      name: Playstation 5,
+                      subcategory_id: 207,
+                      subcategory_name: Lain-lain,
                       city_id: 3303,
-                      harga: 250000,
-                      guarantee: KTP/ Fotocopy KK/ BPKB,
-                      des: sewa ps5 gratis,
+                      city_name: KABUPATEN PURBALINGGA,
+                      price: 250000,
+                      description: sewa ps5 gratis,
                       stock: 9,
+                      longitude: 107.6191228,
+                      latitude: -6.9174639,
+                      url: https://storage.googleapis.com/rentz-id/Logo%20Rentz%20besar.png,
+                      guarantee: SIM
                     }
                   }
         '400':
@@ -628,8 +653,6 @@ paths:
       tags:
         - Product
       description: Search subproduct by id
-      security:
-        - JWTAuth: []
       parameters:
         - name: id
           description: id product
@@ -652,15 +675,17 @@ paths:
                     code: 200,
                     message: "Successful Operation",
                     data: {
-                      ID: 1,
-                      UsersID: 186,
+                      id: 1,
+                      usersid: 1,
+                      name: Playstation 5,
                       subcategory_name: Lain-lain,
-                      subcategory_id: 311,
-                      city_id: 3273,
-                      price: 5000,
-                      des: kertas masih baik,
+                      subcategory_id: 207,
+                      city_id: 3303,
+                      city_name: KABUPATEN PURBALINGGA,
+                      price: 250000,
+                      description: sewa ps5 gratis,
                       stock: 9,
-                      url: https://storage.googleapis.com/rentz-id/novel.jpg
+                      url: https://storage.googleapis.com/rentz-id/Logo%20Rentz%20besar.png,
                     }
                   }
         '400':
@@ -707,27 +732,15 @@ paths:
                 product_id:
                   type: integer
                   example: 1
-                cart_id:
-                  type: integer
-                  example: 12
                 check_in:
                   type: string
-                  example: 2021/12/03
+                  example: 2022/01/20
                 check_out:
                   type: string
-                  example: 2021/12/05
-                total_day:
-                  type: integer
-                  example: 3
+                  example: 2022/01/24
                 qty:
                   type: integer
                   example: 2
-                total:
-                  type: integer
-                  example: 1350000
-                status_pay:
-                  type: string
-                  example: waiting
       responses:
         '200':
           description: Success Response
@@ -740,7 +753,24 @@ paths:
                   description: response success 1
                   value: {
                     code: 200,
-                    message: "Successful Operation",
+                    idbook: {
+                      id: 1,
+                      productsid: 1,
+                      name: playstation 5,
+                      price: 100000,
+                      photos: https://storage.googleapis.com/rentz-id/download.jpg,
+                      time_in: 2022-01-20T00:00:00Z,
+                      time_out: 2022-01-24T00:00:00Z,
+                      total_day: 4,
+                      qty: 1,
+                      total: 400000,
+                      status_payment: waiting,
+                      productownerid: 1,
+                      nama: nama pemilik,
+                      phone_number: 08123456789
+                    },
+                    message: "Success create new booking",
+                    status: success
                   }
         '400':
           description: Failed Response
@@ -754,6 +784,12 @@ paths:
                   value: {
                     code: 400,
                     message: "Bad Request",
+                  }
+                responseData2:
+                  description: response failed 2
+                  value: {
+                    code: 400,
+                    message: "Cannot booking own products",
                   }
   /booking/{id}:
     get:
@@ -785,13 +821,19 @@ paths:
                     message: "Successful Operation",
                     data: {
                       id: 1,
-                      nama: Playstation 5,
-                      time_in: 2021/12/03,
-                      time_out: 2021/12/05,
-                      total_day: 3,
-                      qty: 2,
-                      total: 1350000,
-                      status_pay: waiting,
+                      productsid: 1,
+                      name: playstation 5,
+                      price: 100000,
+                      photos: https://storage.googleapis.com/rentz-id/download.jpg,
+                      time_in: 2022-01-20T00:00:00Z,
+                      time_out: 2022-01-24T00:00:00Z,
+                      total_day: 4,
+                      qty: 1,
+                      total: 400000,
+                      status_payment: waiting,
+                      productownerid: 1,
+                      nama: nama pemilik,
+                      phone_number: 08123456789
                     }
                   }
         '400':
@@ -911,7 +953,7 @@ paths:
                   description: response success 1
                   value: {
                     code: 200,
-                    message: "Product Available",
+                    message: "Item Available",
                   }
         '400':
           description: Failed Response
@@ -938,6 +980,61 @@ paths:
                     code: 400,
                     message: "False Param",
                   }
+  /history:
+    get:
+      tags:
+        - Booking
+      description: Get all history
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseBookingData'
+              examples:
+                responseData1:
+                  description: response success 1
+                  value: {
+                    code: 200,
+                    data: {
+                      ID: 134,
+                      ProductsID: 59,
+                      Name: sepeda ku ada 6,
+                      Price: 100000,
+                      Photos: https://storage.googleapis.com/rentz-id/download.jpg,
+                      Time_In: 2022-01-25T00:00:00Z,
+                      Time_Out: 2022-01-26T00:00:00Z,
+                      Total_Day: 1,
+                      Qty: 1,
+                      Total: 100000,
+                      Status_Payment: success,
+                      ProductOwnerID: 1,
+                      Nama: nama pemilik,
+                      Phone_Number: 08123456789,
+                    }
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/failedResponse'
+              examples:
+                responseData1:
+                  description: response failed 1
+                  value: {
+                    code: 400,
+                    message: "Bad request",
+                  }
+                responseData2:
+                  description: response failed 2
+                  value: {
+                    code: 400,
+                    message: "Booking not found",
+                  }
   ####################################
   #  CHECK OUT
   ####################################
@@ -945,7 +1042,7 @@ paths:
     post:
       tags:
         - Check Out
-      description: Create new reservation
+      description: Check out booking
       security:
         - JWTAuth: []
       requestBody:
@@ -954,23 +1051,12 @@ paths:
             schema:
               type: object
               properties:
-                booking:
+                booking_id:
                   type: integer
                   example: 1,2
-                total:
-                  type: integer
-                  example: 2500000
                 checkout_method:
                   type: string
-                  example: ONE_TIME_PAYMENT
-                channel_code:
-                  type: string
-                  example: ID_OVO
-                kartu_kredit:
-                  properties:
-                    nomor:
-                      type: integer
-                      example: +628123123123
+                  example: ID_DANA
       responses:
         '200':
           description: Success Response
@@ -983,7 +1069,36 @@ paths:
                   description: response success 1
                   value: {
                     code: 200,
-                    message: "Successful Operation",
+                    checkout_id: 1,
+                    message: "Your checkout success",
+                    payment: {
+                      id: ewc_66c5eb91-d1bd-4cf8-83ff-325a0b8c3849,
+                      bussiness_id: 61ac440d22dded470452f27e,
+                      reference_id: 59,
+                      status: PENDING,
+                      currency: IDR,
+                      charge_amount: 400000,
+                      capture_amount: 400000,
+                      checkout_method: ONE_TIME_PAYMENT,
+                      channel_properties: {
+                        success_redirect_url: https://rentzid-f00f3.web.app/keranjang
+                      },
+                      actions: {
+                        desktop_web_checkout_url: "https://ewallet-mock-connector.xendit.co/v1/ewallet_connector/checkouts?token=1bf55c28-4ac0-4292-839f-0a3fdd2069e6",
+                        mobile_deeplink_checkout_url: "",
+                        mobile_web_checkout_url: "https://ewallet-mock-connector.xendit.co/v1/ewallet_connector/checkouts?token=1bf55c28-4ac0-4292-839f-0a3fdd2069e6",
+                        qr_checkout_string: ""
+                      },
+                      is_redirect_required: true,
+                      callback_url: "http://imrenagi.com",
+                      created: "2021-12-27T15:30:31.38772Z",
+                      updated: "2021-12-27T15:30:31.38772Z",
+                      capture_now: true,
+                      metadata: {
+                        branch_area: "PLUIT",
+                        branch_city: "JAKARTA"
+                      }
+                    }
                   }
         '400':
           description: Failed Response
@@ -997,6 +1112,155 @@ paths:
                   value: {
                     code: 400,
                     message: "Bad Request",
+                  }
+                responseData2:
+                  description: response failed 2
+                  value: {
+                    code: 400,
+                    message: "Your booking already paid",
+                    status: failed,
+                  }
+  /checkout/ovo:
+    post:
+      tags:
+        - Check Out
+      description: Check out booking
+      security:
+        - JWTAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                booking_id:
+                  type: integer
+                  example: 1,2
+                phone:
+                  type: string
+                  example: +628123456789
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+              examples:
+                responseData1:
+                  description: response success 1
+                  value: {
+                    code: 200,
+                    checkout_id: 1,
+                    message: "Your checkout success",
+                    payment: {
+                      id: ewc_66c5eb91-d1bd-4cf8-83ff-325a0b8c3849,
+                      bussiness_id: 61ac440d22dded470452f27e,
+                      reference_id: 59,
+                      status: PENDING,
+                      currency: IDR,
+                      charge_amount: 400000,
+                      capture_amount: 400000,
+                      checkout_method: ONE_TIME_PAYMENT,
+                      channel_code: ID_OVO,
+                      channel_properties: {
+                        mobile_number: +628123456789
+                      },
+                      actions: {
+                        desktop_web_checkout_url: "https://ewallet-mock-connector.xendit.co/v1/ewallet_connector/checkouts?token=1bf55c28-4ac0-4292-839f-0a3fdd2069e6",
+                        mobile_deeplink_checkout_url: "",
+                        mobile_web_checkout_url: "https://ewallet-mock-connector.xendit.co/v1/ewallet_connector/checkouts?token=1bf55c28-4ac0-4292-839f-0a3fdd2069e6",
+                        qr_checkout_string: ""
+                      },
+                      is_redirect_required: true,
+                      callback_url: "http://imrenagi.com",
+                      created: "2021-12-27T15:30:31.38772Z",
+                      updated: "2021-12-27T15:30:31.38772Z",
+                      capture_now: true,
+                      metadata: {
+                        branch_area: "PLUIT",
+                        branch_city: "JAKARTA"
+                      }
+                    }
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/failedResponse'
+              examples:
+                responseData1:
+                  description: response failed 1
+                  value: {
+                    code: 400,
+                    message: "Bad Request",
+                  }
+                responseData2:
+                  description: response failed 2
+                  value: {
+                    code: 400,
+                    message: "Your booking already paid",
+                    status: failed,
+                  }
+  ####################################
+  #  CHECK OUT
+  ####################################
+  /cart:
+    get:
+      tags:
+        - Cart
+      description: Get all cart
+      security:
+        - JWTAuth: []
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/responseBookingData'
+              examples:
+                responseData1:
+                  description: response success 1
+                  value: {
+                    code: 200,
+                    message: "Item Available",
+                    data: {
+                      ID: 134,
+                      ProductsID: 59,
+                      Name: sepeda ku ada 6,
+                      Price: 100000,
+                      Photos: https://storage.googleapis.com/rentz-id/download.jpg,
+                      Time_In: 2022-01-25T00:00:00Z,
+                      Time_Out: 2022-01-26T00:00:00Z,
+                      Total_Day: 1,
+                      Qty: 1,
+                      Total: 100000,
+                      Status_Payment: waiting,
+                      ProductOwnerID: 1,
+                      Nama: nama pemilik,
+                      Phone_Number: 08123456789,
+                    }
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/failedResponse'
+              examples:
+                responseData1:
+                  description: response failed 1
+                  value: {
+                    code: 400,
+                    message: "Bad request",
+                  }
+                responseData2:
+                  description: response failed 2
+                  value: {
+                    code: 400,
+                    message: "Booking not found",
                   }
 #==================================#
 #    COMPONENT
