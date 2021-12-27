@@ -224,3 +224,20 @@ func DeleteProductByIDController(c echo.Context) error {
 	databases.DeleteProductByID(id)
 	return c.JSON(http.StatusOK, response.SuccessResponseNonData())
 }
+
+// Controller untuk mendapatkan product berdasarkan nama product
+func GetProductsByNameController(c echo.Context) error {
+	type SearchName struct {
+		Name string `query:"name" json:"name" form:"name"`
+	}
+	var productName SearchName
+	c.Bind(&productName)
+	product, err := databases.GetProductsByName(productName.Name)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if product == nil {
+		return c.JSON(http.StatusBadRequest, response.ItemsNotFoundResponse())
+	}
+	return c.JSON(http.StatusOK, response.SuccessResponseData(product))
+}

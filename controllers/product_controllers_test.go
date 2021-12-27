@@ -2,14 +2,17 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"project3/config"
+	"project3/constant"
 	"project3/middlewares"
 	"project3/models"
 	"testing"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -53,6 +56,19 @@ var (
 		Price:         50000,
 		Description:   "Murah yang terbaik",
 		Stock:         5,
+		Longitude:     107,
+		Latitude:      -6,
+	}
+	mock_data_product2 = models.Products{
+		Name:          "Kamera DSLR Nikon",
+		UsersID:       2,
+		SubcategoryID: 1,
+		CityID:        1,
+		Price:         50000,
+		Description:   "Murah yang terbaik",
+		Stock:         2,
+		Longitude:     107,
+		Latitude:      -6,
 	}
 	mock_data_photo = models.Photos{
 		Photo_Name: "inicontohfoto.jpg",
@@ -68,6 +84,12 @@ var (
 		Email:        "alfy@gmail.com",
 		Password:     "12345678",
 		Phone_Number: "081296620776",
+	}
+	mock_data_user_product2 = models.Users{
+		Nama:         "alfy1",
+		Email:        "alfy1@gmail.com",
+		Password:     "12345678",
+		Phone_Number: "081296627876",
 	}
 	mock_data_login_product = models.Users{
 		Email:    "alfy@gmail.com",
@@ -91,6 +113,14 @@ func InsertMockDataToDB() {
 	config.DB.Save(&mock_data_province)
 	config.DB.Save(&mock_data_city)
 	config.DB.Save(&mock_data_guarantee)
+}
+
+// inisialisasi echo
+func InitEchoC() *echo.Echo {
+	config.InitDBTest()
+	e := echo.New()
+
+	return e
 }
 
 // Fungsi untuk melakukan login dan ekstraksi token JWT
@@ -127,9 +157,10 @@ func TestGetAllProductsControllerSuccess(t *testing.T) {
 		},
 	}
 
-	e := InitEcho()
+	e := InitEchoC()
 
 	InsertMockDataToDB()
+	InsertMockDataUsersToDB()
 	config.DB.Save(&mock_data_product)
 	config.DB.Save(&mock_data_product_guarantee)
 	config.DB.Save(&mock_data_photo)
@@ -164,7 +195,7 @@ func TestGetAllProductsControllerFailed(t *testing.T) {
 		ExpectCode: http.StatusBadRequest,
 	}
 
-	e := InitEcho()
+	e := InitEchoC()
 
 	// Melakukan penghapusan tabel untuk membuat request failed
 	config.DB.Migrator().DropTable(&models.Products{})
@@ -196,7 +227,7 @@ func TestGetAllProductsControllerNotFound(t *testing.T) {
 		ExpectCode: http.StatusBadRequest,
 	}
 
-	e := InitEcho()
+	e := InitEchoC()
 
 	req := httptest.NewRequest(http.MethodGet, "/products", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
@@ -225,9 +256,10 @@ func TestGetProductsByIDControllerSuccess(t *testing.T) {
 		ExpectCode: http.StatusOK,
 	}
 
-	e := InitEcho()
+	e := InitEchoC()
 
 	InsertMockDataToDB()
+	InsertMockDataUsersToDB()
 	config.DB.Save(&mock_data_product)
 	config.DB.Save(&mock_data_product_guarantee)
 	config.DB.Save(&mock_data_photo)
@@ -262,9 +294,10 @@ func TestGetProductsByIDControllerFalseParam(t *testing.T) {
 		ExpectCode: http.StatusBadRequest,
 	}
 
-	e := InitEcho()
+	e := InitEchoC()
 
 	InsertMockDataToDB()
+	InsertMockDataUsersToDB()
 	config.DB.Save(&mock_data_product)
 	config.DB.Save(&mock_data_product_guarantee)
 	config.DB.Save(&mock_data_photo)
@@ -290,350 +323,352 @@ func TestGetProductsByIDControllerFalseParam(t *testing.T) {
 
 }
 
-// // Fungsi untuk melakukan testing fungsi GetProductByIDControllers
-// // kondisi request failed
-// func TestGetProductsByIDControllerWrongID(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "product by id not found",
-// 		Path:       "/products/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductByIDControllers
+// kondisi request failed
+func TestGetProductsByIDControllerWrongID(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "product by id not found",
+		Path:       "/products/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEcho()
+	e := InitEchoC()
 
-// 	InsertMockDataToDB()
-// 	config.DB.Save(&mock_data_product)
-// 	config.DB.Save(&mock_data_product_guarantee)
-// 	config.DB.Save(&mock_data_photo)
+	InsertMockDataToDB()
+	InsertMockDataUsersToDB()
+	config.DB.Save(&mock_data_product)
+	config.DB.Save(&mock_data_product_guarantee)
+	config.DB.Save(&mock_data_photo)
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("2")
+	req := httptest.NewRequest(http.MethodGet, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("2")
 
-// 	if assert.NoError(t, GetProductByIDController(context)) {
-// 		res_body := res.Body.String()
-// 		var response ProductsResponse
-// 		er := json.Unmarshal([]byte(res_body), &response)
-// 		if er != nil {
-// 			assert.Error(t, er, "error")
-// 		}
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Items not found", response.Message)
-// 	}
+	if assert.NoError(t, GetProductByIDController(context)) {
+		res_body := res.Body.String()
+		var response ProductsResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Items not found", response.Message)
+	}
 
-// }
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductByIDControllers
-// // kondisi request failed
-// func TestGetProductsByIDControllerFailed(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "failed to get product",
-// 		Path:       "/products/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductByIDControllers
+// kondisi request failed
+func TestGetProductsByIDControllerFailed(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "failed to get product",
+		Path:       "/products/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEcho()
+	e := InitEchoC()
 
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Products{})
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Products{})
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
+	req := httptest.NewRequest(http.MethodGet, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
 
-// 	if assert.NoError(t, GetProductByIDController(context)) {
-// 		res_body := res.Body.String()
-// 		var response ProductsResponse
-// 		er := json.Unmarshal([]byte(res_body), &response)
-// 		if er != nil {
-// 			assert.Error(t, er, "error")
-// 		}
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	}
-// }
+	if assert.NoError(t, GetProductByIDController(context)) {
+		res_body := res.Body.String()
+		var response ProductsResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	}
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request success
-// func TestGetProductsBySubcategoryIDControllerSuccess(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "success to get one data product by subcategory id",
-// 		Path:       "/products/subcategory/:id",
-// 		ExpectCode: http.StatusOK,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request success
+func TestGetProductsBySubcategoryIDControllerSuccess(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "success to get one data product by subcategory id",
+		Path:       "/products/subcategory/:id",
+		ExpectCode: http.StatusOK,
+	}
 
-// 	e := InitEcho()
+	e := InitEchoC()
 
-// 	InsertMockDataToDB()
-// 	config.DB.Save(&mock_data_product)
-// 	config.DB.Save(&mock_data_product_guarantee)
-// 	config.DB.Save(&mock_data_photo)
+	InsertMockDataToDB()
+	InsertMockDataUsersToDB()
+	config.DB.Save(&mock_data_product)
+	config.DB.Save(&mock_data_product_guarantee)
+	config.DB.Save(&mock_data_photo)
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products/subcategory/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
+	req := httptest.NewRequest(http.MethodGet, "/products/subcategory/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
 
-// 	if assert.NoError(t, GetProductsBySubcategoryIDController(context)) {
-// 		res_body := res.Body.String()
-// 		var response ProductsResponse
-// 		er := json.Unmarshal([]byte(res_body), &response)
-// 		if er != nil {
-// 			assert.Error(t, er, "error")
-// 		}
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Successful Operation", response.Message)
-// 	}
+	if assert.NoError(t, GetProductsBySubcategoryIDController(context)) {
+		res_body := res.Body.String()
+		var response ProductsResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	}
 
-// }
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request success
-// func TestGetProductsBySubcategoryIDControllerFalseParam(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "false param to get one data product by subcategory id",
-// 		Path:       "/products/subcategory/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request success
+func TestGetProductsBySubcategoryIDControllerFalseParam(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "false param to get one data product by subcategory id",
+		Path:       "/products/subcategory/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEcho()
+	e := InitEchoC()
 
-// 	InsertMockDataToDB()
-// 	config.DB.Save(&mock_data_product)
-// 	config.DB.Save(&mock_data_product_guarantee)
-// 	config.DB.Save(&mock_data_photo)
+	InsertMockDataToDB()
+	config.DB.Save(&mock_data_product)
+	config.DB.Save(&mock_data_product_guarantee)
+	config.DB.Save(&mock_data_photo)
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products/subcategory/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("!")
+	req := httptest.NewRequest(http.MethodGet, "/products/subcategory/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("!")
 
-// 	if assert.NoError(t, GetProductsBySubcategoryIDController(context)) {
-// 		res_body := res.Body.String()
-// 		var response ProductsResponse
-// 		er := json.Unmarshal([]byte(res_body), &response)
-// 		if er != nil {
-// 			assert.Error(t, er, "error")
-// 		}
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "False Param", response.Message)
-// 	}
+	if assert.NoError(t, GetProductsBySubcategoryIDController(context)) {
+		res_body := res.Body.String()
+		var response ProductsResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "False Param", response.Message)
+	}
 
-// }
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetProductsBySubcategoryIDControllerWrongID(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "product by subcategory id not found",
-// 		Path:       "/products/subcategory/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetProductsBySubcategoryIDControllerWrongID(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "product by subcategory id not found",
+		Path:       "/products/subcategory/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEcho()
+	e := InitEchoC()
 
-// 	InsertMockDataToDB()
-// 	config.DB.Save(&mock_data_user)
-// 	config.DB.Save(&mock_data_product)
-// 	config.DB.Save(&mock_data_product_guarantee)
-// 	config.DB.Save(&mock_data_photo)
+	InsertMockDataToDB()
+	InsertMockDataUsersToDB()
+	config.DB.Save(&mock_data_product)
+	config.DB.Save(&mock_data_product_guarantee)
+	config.DB.Save(&mock_data_photo)
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products/subcategory/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("2")
+	req := httptest.NewRequest(http.MethodGet, "/products/subcategory/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("2")
 
-// 	if assert.NoError(t, GetProductsBySubcategoryIDController(context)) {
-// 		res_body := res.Body.String()
-// 		var response ProductsResponse
-// 		er := json.Unmarshal([]byte(res_body), &response)
-// 		if er != nil {
-// 			assert.Error(t, er, "error")
-// 		}
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Items not found", response.Message)
-// 	}
+	if assert.NoError(t, GetProductsBySubcategoryIDController(context)) {
+		res_body := res.Body.String()
+		var response ProductsResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Items not found", response.Message)
+	}
 
-// }
+}
 
-// // Fungsi untuk melakukan testing fungsiGetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetProductsBySubcategoryIDControllerFailed(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "failed to get product by subcategory id",
-// 		Path:       "/products/subcateogry/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsiGetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetProductsBySubcategoryIDControllerFailed(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "failed to get product by subcategory id",
+		Path:       "/products/subcateogry/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEcho()
+	e := InitEchoC()
 
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Products{})
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Products{})
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products/subcategory/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
+	req := httptest.NewRequest(http.MethodGet, "/products/subcategory/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
 
-// 	if assert.NoError(t, GetProductsBySubcategoryIDController(context)) {
-// 		res_body := res.Body.String()
-// 		var response ProductsResponse
-// 		er := json.Unmarshal([]byte(res_body), &response)
-// 		if er != nil {
-// 			assert.Error(t, er, "error")
-// 		}
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	}
-// }
+	if assert.NoError(t, GetProductsBySubcategoryIDController(context)) {
+		res_body := res.Body.String()
+		var response ProductsResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	}
+}
 
-// // Fungsi testing CreateProductController
-// func GetProductsByUserIDControllerTesting() echo.HandlerFunc {
-// 	return GetProductsByUserIDController
-// }
+// Fungsi testing CreateProductController
+func GetProductsByUserIDControllerTesting() echo.HandlerFunc {
+	return GetProductsByUserIDController
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request success
-// func TestGetProductsByUserIDControllerSuccess(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "success to get one data product by user id",
-// 		Path:       "/products",
-// 		ExpectCode: http.StatusOK,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request success
+func TestGetProductsByUserIDControllerSuccess(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "success to get one data product by user id",
+		Path:       "/products",
+		ExpectCode: http.StatusOK,
+	}
 
-// 	e := InitEcho()
-// 	// Mendapatkan token
-// 	token, err := UsingJWT()
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	e := InitEchoC()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
 
-// 	InsertMockDataToDB()
-// 	config.DB.Save(&mock_data_user)
-// 	config.DB.Save(&mock_data_product)
-// 	config.DB.Save(&mock_data_product_guarantee)
-// 	config.DB.Save(&mock_data_photo)
+	InsertMockDataToDB()
+	config.DB.Save(&mock_data_product)
+	config.DB.Save(&mock_data_product_guarantee)
+	config.DB.Save(&mock_data_photo)
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetProductsByUserIDControllerTesting())(context)
+	req := httptest.NewRequest(http.MethodGet, "/products", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetProductsByUserIDControllerTesting())(context)
 
-// 	res_body := res.Body.String()
-// 	var response ProductsResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/products", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Successful Operation", response.Message)
-// 	})
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/products", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
 
-// }
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetProductsByUserIDControllerNotFound(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "product by user id not found",
-// 		Path:       "/products",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetProductsByUserIDControllerNotFound(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "product by user id not found",
+		Path:       "/products",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEcho()
-// 	// Mendapatkan token
-// 	token, err := UsingJWT()
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	e := InitEchoC()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
 
-// 	InsertMockDataToDB()
-// 	config.DB.Save(&mock_data_user)
+	InsertMockDataToDB()
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetProductsByUserIDControllerTesting())(context)
+	req := httptest.NewRequest(http.MethodGet, "/products", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetProductsByUserIDControllerTesting())(context)
 
-// 	res_body := res.Body.String()
-// 	var response ProductsResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/products", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Items not found", response.Message)
-// 	})
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/products", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Items not found", response.Message)
+	})
 
-// }
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetProductsByUserIDControllerFailed(t *testing.T) {
-// 	var testCase = TestCase{
-// 		Name:       "failed to get one data product by user id",
-// 		Path:       "/products",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetProductsByUserIDControllerFailed(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "failed to get one data product by user id",
+		Path:       "/products",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEcho()
-// 	// Mendapatkan token
-// 	token, err := UsingJWT()
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	e := InitEchoC()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
 
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Products{})
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Products{})
 
-// 	req := httptest.NewRequest(http.MethodGet, "/products", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetProductsByUserIDControllerTesting())(context)
+	req := httptest.NewRequest(http.MethodGet, "/products", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetProductsByUserIDControllerTesting())(context)
 
-// 	res_body := res.Body.String()
-// 	var response ProductsResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/products", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	})
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/products", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
 
-// }
+}
+
+//===================================================================================================
 
 // // Fungsi testing CreateProductController
 // func CreateProductControllerTesting() echo.HandlerFunc {
@@ -1051,3 +1086,177 @@ func TestGetProductsByIDControllerFalseParam(t *testing.T) {
 // 	})
 
 // }
+
+//====================================================================================================================
+
+// Fungsi testing DeleteProductController
+func DeleteProductControllerTesting() echo.HandlerFunc {
+	return DeleteProductByIDController
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteProductsControllerSuccess(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "Success delete product",
+		Path:       "/products",
+		ExpectCode: http.StatusOK,
+	}
+
+	e := InitEchoC()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataToDB()
+	config.DB.Save(&mock_data_product)
+
+	req := httptest.NewRequest(http.MethodDelete, "/products", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(DeleteProductControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/products", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteProductsControllerFailed(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "Failed to delete product",
+		Path:       "/products/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoC()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Products{})
+
+	req := httptest.NewRequest(http.MethodDelete, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(DeleteProductControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/products/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteProductsControllerFalseParam(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "False param",
+		Path:       "/products",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoC()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("!")
+	middleware.JWT([]byte(constant.SECRET_JWT))(DeleteProductControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/products/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "False Param", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteProductsControllerNotAllowed(t *testing.T) {
+	var testCase = TestCase{
+		Name:       "Not allowed to delet",
+		Path:       "/products/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoC()
+	// Mendapatkan token
+	token, err := UsingJWT()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataToDB()
+	config.DB.Save(&mock_data_user_product2)
+	config.DB.Save(&mock_data_product)
+	config.DB.Save(&mock_data_product2)
+
+	req := httptest.NewRequest(http.MethodDelete, "/products/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("2")
+	middleware.JWT([]byte(constant.SECRET_JWT))(DeleteProductControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response ProductsResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/products/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Access Forbidden", response.Message)
+	})
+
+}

@@ -95,6 +95,9 @@ func GetHistoryByCartID(id int) (interface{}, error) {
 		booking[i].Photos, _ = GetPhotoURL(int(booking[i].ProductsID))
 		booking[i].Name, _ = GetName(int(booking[i].ProductsID))
 		booking[i].Price, _ = GetPrice(int(booking[i].ProductsID))
+		booking[i].ProductOwnerID, _ = GetProductOwner(int(booking[i].ProductsID))
+		booking[i].Nama, _, _ = GetProductOwnerData(booking[i].ProductOwnerID)
+		_, booking[i].Phone_Number, _ = GetProductOwnerData(booking[i].ProductOwnerID)
 	}
 	return booking, nil
 }
@@ -142,4 +145,13 @@ func GetName(idProduct int) (string, error) {
 		return "", tx.Error
 	}
 	return name, nil
+}
+
+func GetProductOwnerData(id int) (string, string, error) {
+	var user models.Get_User
+	tx := config.DB.Table("users").Select("users.nama, users.phone_number").Where("id = ?", id).Find(&user)
+	if tx.Error != nil {
+		return "", "", tx.Error
+	}
+	return user.Nama, user.Phone_Number, nil
 }

@@ -25,6 +25,7 @@ func New() *echo.Echo {
 	e.GET("/products/:id", controllers.GetProductByIDController)
 	e.GET("/products/subcategory/:id", controllers.GetProductsBySubcategoryIDController)
 	e.POST("/booking/check/:id", controllers.ProductRentCheckController)
+	e.POST("/search", controllers.GetProductsByNameController)
 
 	// JWT Group
 	r := e.Group("/jwt")

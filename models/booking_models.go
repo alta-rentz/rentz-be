@@ -47,4 +47,7 @@ type GetBookingDetail struct {
 	Qty            int
 	Total          int
 	Status_Payment string
+	ProductOwnerID int
+	Nama           string
+	Phone_Number   string
 }

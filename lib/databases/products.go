@@ -135,3 +135,17 @@ func GetProductOwner(id int) (int, error) {
 	}
 	return ownerProduct, nil
 }
+
+// Fungsi untuk mendapatkan product berdasarkan search name
+func GetProductsByName(product string) (interface{}, error) {
+	var results []models.GetAllProduct
+	var search = "%" + product + "%"
+	tx := config.DB.Table("products").Select("products.id, products.users_id, products.name, subcategories.subcategory_name, products.subcategory_id, products.city_id, cities.city_name, products.price, products.description, products.stock, photos.url").Group("products.id").Joins(
+		"join subcategories on subcategories.id = products.subcategory_id").Joins(
+		"join photos on photos.products_id = products.id").Joins(
+		"join cities on products.city_id = cities.id").Where("products.deleted_at IS NULL AND products.name LIKE ?", search).Find(&results)
+	if tx.Error != nil || tx.RowsAffected < 1 {
+		return nil, tx.Error
+	}
+	return results, nil
+}

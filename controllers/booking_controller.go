@@ -88,7 +88,11 @@ func CancelBookingController(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, response.FalseParamResponse())
 	}
 	logged := middlewares.ExtractTokenUserId(c)
-	if uint(logged) == 0 {
+	bookingOwner, err := databases.GetBookingOwner(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.BadRequestResponse())
+	}
+	if bookingOwner != logged {
 		return c.JSON(http.StatusBadRequest, response.AccessForbiddenResponse())
 	}
 	databases.CancelBooking(id)
