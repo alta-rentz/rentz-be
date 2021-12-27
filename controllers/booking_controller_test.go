@@ -1,12 +1,21 @@
 package controllers
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
 	"project3/config"
+	"project3/constant"
 	"project3/middlewares"
 	"project3/models"
+	"testing"
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/stretchr/testify/assert"
 )
 
 // Struct yang digunakan ketika test request success, dapat menampung banyak data
@@ -174,826 +183,1301 @@ func UsingJWTB() (string, error) {
 	return token, nil
 }
 
-// // Fungsi testing CreateProductController
-// func GetBookingByIDControllerTesting() echo.HandlerFunc {
-// 	return GetBookingByIdController
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request success
-// func TestGetBookingByIdControllerSuccess(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "success to get booking by id",
-// 		Path:       "/booking",
-// 		ExpectCode: http.StatusOK,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	InsertMockDataBToDB()
-// 	config.DB.Save(&mock_data_user2_b)
-// 	config.DB.Save(&mock_data_product_b)
-// 	config.DB.Save(&mock_data_product2_b)
-// 	config.DB.Save(&mock_data_cart)
-// 	config.DB.Save(&mock_data_booking)
-
-// 	req := httptest.NewRequest(http.MethodGet, "/booking", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/booking", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Successful Operation", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetBookingByIDControllerNotFound(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "get booking not found",
-// 		Path:       "/booking",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	req := httptest.NewRequest(http.MethodGet, "/booking", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/booking", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Booking not found", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetBookingByIDControllerFailed(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "failed to get booking",
-// 		Path:       "/booking",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Booking{})
-
-// 	req := httptest.NewRequest(http.MethodGet, "/booking", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/booking", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetBookingByIDControlleFailed(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "failed to get booking",
-// 		Path:       "/booking",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Booking{})
-
-// 	req := httptest.NewRequest(http.MethodGet, "/booking", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("!")
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/booking", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "False Param", response.Message)
-// 	})
-
-// }
-
-//===============================================================================================================================
-
-// // Fungsi testing CreateProductController
-// func GetBookingByCartIDControllerTesting() echo.HandlerFunc {
-// 	return GetBookingByCartIDController
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request success
-// func TestGetBookingByCartIDControllerSuccess(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "success to get booking by cart id",
-// 		Path:       "/cart",
-// 		ExpectCode: http.StatusOK,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	InsertMockDataBToDB()
-// 	config.DB.Save(&mock_data_user2_b)
-// 	config.DB.Save(&mock_data_product_b)
-// 	config.DB.Save(&mock_data_product2_b)
-// 	config.DB.Save(&mock_data_cart)
-// 	config.DB.Save(&mock_data_booking)
-
-// 	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/cart", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Successful Operation", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetBookingByCartIDControllerNotFound(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "get booking not found",
-// 		Path:       "/cart",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/cart", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Booking not found", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetBookingByCartIDControllerFailed(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "failed to get booking",
-// 		Path:       "/cart",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Booking{})
-
-// 	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/cart", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetBookingByCartIDControllerCartNotFound(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "failed to get booking",
-// 		Path:       "/cart",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Cart{})
-
-// 	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/cart", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	})
-
-// }
-
-// //====================================================================================================================================
-// // Fungsi testing CreateProductController
-// func GetHistoryByCartIDControllerTesting() echo.HandlerFunc {
-// 	return GetHistoryByCartIDController
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request success
-// func TestGetHistoryByCartIDControllerSuccess(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "success to get history by cart id",
-// 		Path:       "/history",
-// 		ExpectCode: http.StatusOK,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	InsertMockDataBToDB()
-// 	config.DB.Save(&mock_data_user2_b)
-// 	config.DB.Save(&mock_data_product_b)
-// 	config.DB.Save(&mock_data_product2_b)
-// 	config.DB.Save(&mock_data_cart)
-// 	config.DB.Save(&mock_data_booking2)
-
-// 	req := httptest.NewRequest(http.MethodGet, "/history", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetHistoryByCartIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/history", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Successful Operation", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetHistoryByCartIDControllerNotFound(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "get history not found",
-// 		Path:       "/history",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	req := httptest.NewRequest(http.MethodGet, "/history", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetHistoryByCartIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/history", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Booking not found", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetBookingByIDControllerFailed(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "failed to get history",
-// 		Path:       "/history",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Booking{})
-
-// 	req := httptest.NewRequest(http.MethodGet, "/history", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetHistoryByCartIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/history", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	})
-
-// }
-
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestGetHistoryByCartIDControllerNoCart(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "failed to get history",
-// 		Path:       "/history",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
-
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
-
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Cart{})
-
-// 	req := httptest.NewRequest(http.MethodGet, "/history", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(GetHistoryByCartIDControllerTesting())(context)
-
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("GET /jwt/history", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	})
-
-// }
+// Fungsi testing CreateProductController
+func GetBookingByIDControllerTesting() echo.HandlerFunc {
+	return GetBookingByIdController
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request success
+func TestGetBookingByIdControllerSuccess(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "success to get booking by id",
+		Path:       "/booking",
+		ExpectCode: http.StatusOK,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+	config.DB.Save(&mock_data_booking)
+
+	req := httptest.NewRequest(http.MethodGet, "/booking", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByIDControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetBookingByIDControllerNotFound(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "get booking not found",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/booking", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByIDControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Booking not found", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetBookingByIDControllerFailed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "failed to get booking",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Booking{})
+
+	req := httptest.NewRequest(http.MethodGet, "/booking", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByIDControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetBookingByIDControlleFailed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "failed to get booking",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Booking{})
+
+	req := httptest.NewRequest(http.MethodGet, "/booking", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("!")
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByIDControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "False Param", response.Message)
+	})
+
+}
+
+// ===============================================================================================================================
+
+// Fungsi testing CreateProductController
+func GetBookingByCartIDControllerTesting() echo.HandlerFunc {
+	return GetBookingByCartIDController
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request success
+func TestGetBookingByCartIDControllerSuccess(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "success to get booking by cart id",
+		Path:       "/cart",
+		ExpectCode: http.StatusOK,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+	config.DB.Save(&mock_data_booking)
+
+	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/cart", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetBookingByCartIDControllerNotFound(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "get booking not found",
+		Path:       "/cart",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/cart", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Booking not found", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetBookingByCartIDControllerFailed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "failed to get booking",
+		Path:       "/cart",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Booking{})
+
+	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/cart", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetBookingByCartIDControllerCartNotFound(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "failed to get booking",
+		Path:       "/cart",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Cart{})
+
+	req := httptest.NewRequest(http.MethodGet, "/cart", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetBookingByCartIDControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/cart", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
+
+}
 
 //====================================================================================================================================
-// // Fungsi testing DeleteProductController
-// func CancelBookingControllerTesting() echo.HandlerFunc {
-// 	return CancelBookingController
-// }
+// Fungsi testing CreateProductController
+func GetHistoryByCartIDControllerTesting() echo.HandlerFunc {
+	return GetHistoryByCartIDController
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestCancelBookingControllerSuccess(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "Success cancel booking",
-// 		Path:       "/booking/:id",
-// 		ExpectCode: http.StatusOK,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request success
+func TestGetHistoryByCartIDControllerSuccess(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "success to get history by cart id",
+		Path:       "/history",
+		ExpectCode: http.StatusOK,
+	}
 
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
 
-// 	InsertMockDataBToDB()
-// 	config.DB.Save(&mock_data_product_b)
-// 	config.DB.Save(&mock_data_cart)
-// 	config.DB.Save(&mock_data_booking)
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+	config.DB.Save(&mock_data_booking2)
 
-// 	req := httptest.NewRequest(http.MethodDelete, "/booking/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(CancelBookingControllerTesting())(context)
+	req := httptest.NewRequest(http.MethodGet, "/history", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetHistoryByCartIDControllerTesting())(context)
 
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Successful Operation", response.Message)
-// 	})
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/history", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
 
-// }
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestCancelBookingControllerFailed(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "Failed to cancel booking",
-// 		Path:       "/booking/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetHistoryByCartIDControllerNotFound(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "get history not found",
+		Path:       "/history",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
 
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Booking{})
+	req := httptest.NewRequest(http.MethodGet, "/history", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetHistoryByCartIDControllerTesting())(context)
 
-// 	req := httptest.NewRequest(http.MethodDelete, "/booking/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(CancelBookingControllerTesting())(context)
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/history", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Booking not found", response.Message)
+	})
 
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Bad Request", response.Message)
-// 	})
+}
 
-// }
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetHistoryByIDControllerFailed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "failed to get history",
+		Path:       "/history",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestDeleteProductsControllerFalseParam(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "False param",
-// 		Path:       "/booking/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
 
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Booking{})
 
-// 	req := httptest.NewRequest(http.MethodDelete, "/booking/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("!")
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(CancelBookingControllerTesting())(context)
+	req := httptest.NewRequest(http.MethodGet, "/history", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetHistoryByCartIDControllerTesting())(context)
 
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "False Param", response.Message)
-// 	})
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/history", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
 
-// }
+}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestDeleteProductsControllerNotAllowed(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "Not allowed to delete",
-// 		Path:       "/booking/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestGetHistoryByCartIDControllerNoCart(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "failed to get history",
+		Path:       "/history",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	e := InitEchoB()
-// 	// Mendapatkan token
-// 	token, err := UsingJWTB()
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
 
-// 	InsertMockDataBToDB()
-// 	config.DB.Save(&mock_data_cart)
-// 	config.DB.Save(&mock_data_user2_b)
-// 	config.DB.Save(&mock_data_cart2)
-// 	config.DB.Save(&mock_data_product_b)
-// 	config.DB.Save(&mock_data_booking)
-// 	config.DB.Save(&mock_data_booking3)
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Cart{})
 
-// 	req := httptest.NewRequest(http.MethodDelete, "/booking/:id", nil)
-// 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-// 	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("2")
-// 	middleware.JWT([]byte(constant.SECRET_JWT))(CancelBookingControllerTesting())(context)
+	req := httptest.NewRequest(http.MethodGet, "/history", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(GetHistoryByCartIDControllerTesting())(context)
 
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "Access Forbidden", response.Message)
-// 	})
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("GET /jwt/history", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
 
-// }
+}
 
-// //====================================================================================================================================
+// ====================================================================================================================================
+// Fungsi testing DeleteProductController
+func CancelBookingControllerTesting() echo.HandlerFunc {
+	return CancelBookingController
+}
 
-// // Fungsi untuk melakukan testing fungsi ProductRentCheckController
-// // kondisi request success
-// func TestProductRentCheckControllerrSuccess(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "items available",
-// 		Path:       "/booking/check/:id",
-// 		ExpectCode: http.StatusOK,
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCancelBookingControllerSuccess(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "Success cancel booking",
+		Path:       "/booking/:id",
+		ExpectCode: http.StatusOK,
+	}
 
-// 	e := InitEchoB()
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
 
-// 	InsertMockDataBToDB()
-// 	config.DB.Save(&mock_data_product_b)
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_product_b)
+	config.DB.Save(&mock_data_cart)
+	config.DB.Save(&mock_data_booking)
 
-// 	check := BodyDate{
-// 		Time_In:  "2022-01-02",
-// 		Time_Out: "2022-01-04",
-// 	}
-// 	fmt.Println("ini test: ", check)
+	req := httptest.NewRequest(http.MethodDelete, "/booking/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(CancelBookingControllerTesting())(context)
 
-// 	body, err := json.Marshal(check)
-// 	if err != nil {
-// 		t.Error(t, err, "error")
-// 	}
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Successful Operation", response.Message)
+	})
 
-// 	req := httptest.NewRequest(http.MethodPost, "/booking/check/:id", bytes.NewBuffer(body))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
-// 	ProductRentCheckController(context)
+}
 
-// 	res_body := res.Body.String()
-// 	fmt.Println("res_body")
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCancelBookingControllerFailed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "Failed to cancel booking",
+		Path:       "/booking/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	assert.Equal(t, testCase.ExpectCode, res.Code)
-// 	assert.Equal(t, "Item available", response.Message)
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
 
-// }
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Booking{})
 
-// // Fungsi untuk melakukan testing fungsi ProductRentCheckController
-// // kondisi request success
-// func TestProductRentCheckControllerFailed(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "booking empty",
-// 		Path:       "/booking/check/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+	req := httptest.NewRequest(http.MethodDelete, "/booking/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	middleware.JWT([]byte(constant.SECRET_JWT))(CancelBookingControllerTesting())(context)
 
-// 	e := InitEchoB()
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
 
-// 	// Melakukan penghapusan tabel untuk membuat request failed
-// 	config.DB.Migrator().DropTable(&models.Booking{})
+}
 
-// 	check := BodyDate{
-// 		Time_In:  "2022-01-02",
-// 		Time_Out: "2022-01-04",
-// 	}
-// 	fmt.Println("ini test: ", check)
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestDeleteBookingControllerFalseParam(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "False param",
+		Path:       "/booking/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// 	body, err := json.Marshal(check)
-// 	if err != nil {
-// 		t.Error(t, err, "error")
-// 	}
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
 
-// 	req := httptest.NewRequest(http.MethodPost, "/booking/check/:id", bytes.NewBuffer(body))
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("1")
-// 	ProductRentCheckController(context)
+	req := httptest.NewRequest(http.MethodDelete, "/booking/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("!")
+	middleware.JWT([]byte(constant.SECRET_JWT))(CancelBookingControllerTesting())(context)
 
-// 	res_body := res.Body.String()
-// 	fmt.Println("res_body")
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "False Param", response.Message)
+	})
 
-// 	assert.Equal(t, testCase.ExpectCode, res.Code)
-// 	assert.Equal(t, "Bad Request", response.Message)
+}
 
-// }
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCancelBookingControllerNotAllowed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "Not allowed to delete",
+		Path:       "/booking/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
 
-// // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// // kondisi request failed
-// func TestProductRentCheckControllerFalseParam(t *testing.T) {
-// 	var testCase = TestCaseCart{
-// 		Name:       "False param",
-// 		Path:       "/booking/check/:id",
-// 		ExpectCode: http.StatusBadRequest,
-// 	}
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
 
-// 	e := InitEchoB()
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_cart)
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_cart2)
+	config.DB.Save(&mock_data_product_b)
+	config.DB.Save(&mock_data_booking)
+	config.DB.Save(&mock_data_booking3)
 
-// 	check := BodyDate{
-// 		Time_In:  "2022-01-02",
-// 		Time_Out: "2022-01-04",
-// 	}
-// 	fmt.Println("ini test: ", check)
+	req := httptest.NewRequest(http.MethodDelete, "/booking/:id", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("2")
+	middleware.JWT([]byte(constant.SECRET_JWT))(CancelBookingControllerTesting())(context)
 
-// 	body, err := json.Marshal(check)
-// 	if err != nil {
-// 		t.Error(t, err, "error")
-// 	}
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Access Forbidden", response.Message)
+	})
 
-// 	req := httptest.NewRequest(http.MethodDelete, "/booking/check/:id", body)
-// 	res := httptest.NewRecorder()
-// 	context := e.NewContext(req, res)
-// 	context.SetPath(testCase.Path)
-// 	context.SetParamNames("id")
-// 	context.SetParamValues("!")
-// 	ProductRentCheckController()(context)
+}
 
-// 	res_body := res.Body.String()
-// 	var response CartBookResponse
-// 	er := json.Unmarshal([]byte(res_body), &response)
-// 	if er != nil {
-// 		assert.Error(t, er, "error")
-// 	}
-// 	t.Run("DELETE /jwt/booking/:id", func(t *testing.T) {
-// 		assert.Equal(t, testCase.ExpectCode, res.Code)
-// 		assert.Equal(t, "False Param", response.Message)
-// 	})
+//====================================================================================================================================
 
-// }
+// Fungsi untuk melakukan testing fungsi ProductRentCheckController
+// kondisi request success
+func TestProductRentCheckControllerrSuccess(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "items available",
+		Path:       "/booking/check/:id",
+		ExpectCode: http.StatusOK,
+	}
+
+	e := InitEchoB()
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user_b)
+	config.DB.Save(&mock_data_product_b)
+
+	check := BodyDate{
+		Time_In:  "2022-01-02",
+		Time_Out: "2022-01-04",
+	}
+
+	body, err := json.Marshal(check)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/booking/check/:id", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	if assert.NoError(t, ProductRentCheckController(context)) {
+		res_body := res.Body.String()
+		var response CartBookResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Item available", response.Message)
+	}
+
+}
+
+// Fungsi untuk melakukan testing fungsi ProductRentCheckController
+// kondisi request failed
+func TestProductRentCheckControllerFailed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "booking empty",
+		Path:       "/booking/check/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Booking{})
+
+	check := BodyDate{
+		Time_In:  "2022-01-02",
+		Time_Out: "2022-01-04",
+	}
+
+	body, err := json.Marshal(check)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/booking/check/:id", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	if assert.NoError(t, ProductRentCheckController(context)) {
+		res_body := res.Body.String()
+		var response CartBookResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	}
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestProductRentCheckControllerFalseParam(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "False param",
+		Path:       "/booking/check/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+
+	check := BodyDate{
+		Time_In:  "2022-01-02",
+		Time_Out: "2022-01-04",
+	}
+
+	body, err := json.Marshal(check)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/booking/check/:id", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("!")
+	if assert.NoError(t, ProductRentCheckController(context)) {
+		res_body := res.Body.String()
+		var response CartBookResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "False Param", response.Message)
+	}
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestProductRentCheckControllerDateInvalid(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "Rent date invalid",
+		Path:       "/booking/check/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user_b)
+	config.DB.Save(&mock_data_product_b)
+
+	check := BodyDate{
+		Time_In:  "2021-12-01",
+		Time_Out: "2021-12-05",
+	}
+
+	body, err := json.Marshal(check)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/booking/check/:id", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	if assert.NoError(t, ProductRentCheckController(context)) {
+		res_body := res.Body.String()
+		var response CartBookResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Renting Date Invalid", response.Message)
+	}
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestProductRentCheckControllerDateInvalid2(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "Rent date invalid",
+		Path:       "/booking/check/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user_b)
+	config.DB.Save(&mock_data_product_b)
+
+	check := BodyDate{
+		Time_In:  "2022-01-05",
+		Time_Out: "2022-01-01",
+	}
+
+	body, err := json.Marshal(check)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/booking/check/:id", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	if assert.NoError(t, ProductRentCheckController(context)) {
+		res_body := res.Body.String()
+		var response CartBookResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Renting Date Invalid", response.Message)
+	}
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestProductRentCheckControllerNotAvailable(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "Items not available",
+		Path:       "/booking/check/:id",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user_b)
+	config.DB.Save(&mock_data_product_b)
+	time1 = time.Now()
+	time2 = time.Now().AddDate(0, 0, 5)
+	booking := models.Booking{
+		ProductsID:     1,
+		CartID:         1,
+		Time_In:        time1,
+		Time_Out:       time2,
+		Total_Day:      2,
+		Qty:            1,
+		Total:          100000,
+		Status_Payment: "waiting",
+	}
+	config.DB.Save(&mock_data_cart)
+	config.DB.Save(&booking)
+
+	check := BodyDate{
+		Time_In:  "2021-12-29",
+		Time_Out: "2021-12-30",
+	}
+
+	body, err := json.Marshal(check)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodDelete, "/booking/check/:id", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	context.SetParamNames("id")
+	context.SetParamValues("1")
+	if assert.NoError(t, ProductRentCheckController(context)) {
+		res_body := res.Body.String()
+		var response CartBookResponse
+		er := json.Unmarshal([]byte(res_body), &response)
+		if er != nil {
+			assert.Error(t, er, "error")
+		}
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Item not available", response.Message)
+	}
+
+}
+
+//====================================================================================================================================
+
+// Fungsi testing CreateProductController
+func CreateBookingControllerTesting() echo.HandlerFunc {
+	return CreateBookingControllers
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request success
+func TestCreateBookingControllerSuccess(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "success to create booking",
+		Path:       "/booking",
+		ExpectCode: http.StatusOK,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+
+	input := models.BookingBody{
+		ProductsID: 1,
+		Time_In:    "2022-01-01",
+		Time_Out:   "2022-01-05",
+		Qty:        1,
+	}
+	body, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/booking", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(CreateBookingControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("POST /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "success create new booking", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCreateBookingControllerDateInvalid(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "renting date invalid",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+
+	input := models.BookingBody{
+		ProductsID: 1,
+		Time_In:    "2022-01-05",
+		Time_Out:   "2022-01-01",
+		Qty:        1,
+	}
+	body, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/booking", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(CreateBookingControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("POST /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Renting Date Invalid", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCreateBookingControllerFailed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "renting date invalid",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+
+	input := models.BookingBody{
+		ProductsID: 1,
+		Time_In:    "2022-01-01",
+		Time_Out:   "2022-01-05",
+		Qty:        1,
+	}
+	body, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Booking{})
+
+	req := httptest.NewRequest(http.MethodPost, "/booking", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(CreateBookingControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("POST /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCreateBookingControllerDateInvalid2(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "renting date invalid",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+	config.DB.Save(&mock_data_booking)
+
+	input := models.BookingBody{
+		ProductsID: 1,
+		Time_In:    "2021-12-27",
+		Time_Out:   "2021-12-28",
+		Qty:        1,
+	}
+
+	body, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/booking", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(CreateBookingControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("POST /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Item not available", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCreateBookingControllerNotAllowed(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "not allowed to book",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_product_b)
+	config.DB.Save(&mock_data_cart)
+
+	input := models.BookingBody{
+		ProductsID: 1,
+		Time_In:    "2022-01-01",
+		Time_Out:   "2022-01-05",
+		Qty:        1,
+	}
+	body, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/booking", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(CreateBookingControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("POST /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Cannot booking own products", response.Message)
+	})
+
+}
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCreateBookingControllerNoCart(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "renting failed",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+
+	input := models.BookingBody{
+		ProductsID: 1,
+		Time_In:    "2022-01-01",
+		Time_Out:   "2022-01-05",
+		Qty:        1,
+	}
+	body, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	// Melakukan penghapusan tabel untuk membuat request failed
+	config.DB.Migrator().DropTable(&models.Cart{})
+
+	req := httptest.NewRequest(http.MethodPost, "/booking", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(CreateBookingControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("POST /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Bad Request", response.Message)
+	})
+
+}

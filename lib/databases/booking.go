@@ -96,8 +96,7 @@ func GetHistoryByCartID(id int) (interface{}, error) {
 		booking[i].Name, _ = GetName(int(booking[i].ProductsID))
 		booking[i].Price, _ = GetPrice(int(booking[i].ProductsID))
 		booking[i].ProductOwnerID, _ = GetProductOwner(int(booking[i].ProductsID))
-		booking[i].Nama, _, _ = GetProductOwnerData(booking[i].ProductOwnerID)
-		_, booking[i].Phone_Number, _ = GetProductOwnerData(booking[i].ProductOwnerID)
+		booking[i].Nama, booking[i].Phone_Number, _ = GetProductOwnerData(booking[i].ProductOwnerID)
 	}
 	return booking, nil
 }
