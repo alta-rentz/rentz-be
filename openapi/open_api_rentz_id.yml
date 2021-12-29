@@ -713,6 +713,74 @@ paths:
                     code: 400,
                     message: "False Param",
                   }
+  /search:
+    post:
+      tags:
+        - Product
+      description: Search product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: playstation
+      responses:
+        '200':
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/successResponse'
+              examples:
+                responseData1:
+                  description: response success 1
+                  value: {
+                    code: 200,
+                    checkout_id: 1,
+                    message: "Your checkout success",
+                    data: {
+                      id: 1,
+                      usersid: 1,
+                      created_at: 2021-12-24T17:43:54.199Z,
+                      nama: Fafa Ganskuy,
+                      phone_number: 08123456789,
+                      name: Playstation 5,
+                      subcategory_id: 207,
+                      subcategory_name: Lain-lain,
+                      city_id: 3303,
+                      city_name: KABUPATEN PURBALINGGA,
+                      price: 250000,
+                      description: sewa ps5 gratis,
+                      stock: 9,
+                      longitude: 107.6191228,
+                      latitude: -6.9174639,
+                      url: https://storage.googleapis.com/rentz-id/Logo%20Rentz%20besar.png,
+                      guarantee: SIM
+                    }
+                  }
+        '400':
+          description: Failed Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/failedResponse'
+              examples:
+                responseData1:
+                  description: response failed 1
+                  value: {
+                    code: 400,
+                    message: "Bad Request",
+                  }
+                responseData2:
+                  description: response failed 2
+                  value: {
+                    code: 400,
+                    message: "Items not found",
+                    status: failed,
+                  }
   ####################################
   #  BOOKING
   ####################################
