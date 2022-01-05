@@ -137,17 +137,12 @@ Setelah user melakukan pencarian product yang dibutuhkan dengan berbagai jaminan
 
 <details>
 <summary>📈&nbsp;ERD</summary>
-<img src="images/Project2 (3).jpg">
-</details>
-
-<details>
-<summary>📖&nbsp;User Stories</summary>
-<img src="images/Project2 (3).jpg">
+<img src="image/ERD.jpg">
 </details>
 
 <details>
 <summary>📨&nbsp;Workflow User</summary>
-<img src="images/Project2 (3).jpg">
+<img src="image/Picture2.png">
 </details>
 
 <!-- CONTACT -->
