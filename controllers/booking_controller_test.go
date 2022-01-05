@@ -104,7 +104,7 @@ var (
 		UsersID: 2,
 	}
 	time1             = time.Now()
-	time2             = time.Now().AddDate(0, 0, 2)
+	time2             = time.Now().AddDate(0, 0, 5)
 	mock_data_booking = models.Booking{
 		ProductsID:     1,
 		CartID:         1,
@@ -128,6 +128,16 @@ var (
 	mock_data_booking3 = models.Booking{
 		ProductsID:     1,
 		CartID:         2,
+		Time_In:        time1,
+		Time_Out:       time2,
+		Total_Day:      2,
+		Qty:            1,
+		Total:          100000,
+		Status_Payment: "succes",
+	}
+	mock_data_booking4 = models.Booking{
+		ProductsID:     2,
+		CartID:         1,
 		Time_In:        time1,
 		Time_Out:       time2,
 		Total_Day:      2,
@@ -870,7 +880,7 @@ func TestCancelBookingControllerNotAllowed(t *testing.T) {
 
 }
 
-//====================================================================================================================================
+// ====================================================================================================================================
 
 // Fungsi untuk melakukan testing fungsi ProductRentCheckController
 // kondisi request success
@@ -1121,8 +1131,8 @@ func TestProductRentCheckControllerNotAvailable(t *testing.T) {
 	config.DB.Save(&booking)
 
 	check := BodyDate{
-		Time_In:  "2021-12-29",
-		Time_Out: "2021-12-30",
+		Time_In:  "2022-01-01",
+		Time_Out: "2022-01-02",
 	}
 
 	body, err := json.Marshal(check)
@@ -1179,7 +1189,7 @@ func TestCreateBookingControllerSuccess(t *testing.T) {
 	config.DB.Save(&mock_data_cart)
 
 	input := models.BookingBody{
-		ProductsID: 1,
+		ProductsID: 2,
 		Time_In:    "2022-01-01",
 		Time_Out:   "2022-01-05",
 		Qty:        1,
@@ -1321,61 +1331,6 @@ func TestCreateBookingControllerFailed(t *testing.T) {
 
 // Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
 // kondisi request failed
-func TestCreateBookingControllerDateInvalid2(t *testing.T) {
-	var testCase = TestCaseCart{
-		Name:       "renting date invalid",
-		Path:       "/booking",
-		ExpectCode: http.StatusBadRequest,
-	}
-
-	e := InitEchoB()
-	// Mendapatkan token
-	token, err := UsingJWTB()
-	if err != nil {
-		panic(err)
-	}
-
-	InsertMockDataBToDB()
-	config.DB.Save(&mock_data_user2_b)
-	config.DB.Save(&mock_data_product2_b)
-	config.DB.Save(&mock_data_cart)
-	config.DB.Save(&mock_data_booking)
-
-	input := models.BookingBody{
-		ProductsID: 1,
-		Time_In:    "2021-12-27",
-		Time_Out:   "2021-12-28",
-		Qty:        1,
-	}
-
-	body, err := json.Marshal(input)
-	if err != nil {
-		t.Error(t, err, "error")
-	}
-
-	req := httptest.NewRequest(http.MethodPost, "/booking", bytes.NewBuffer(body))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
-	res := httptest.NewRecorder()
-	context := e.NewContext(req, res)
-	context.SetPath(testCase.Path)
-	middleware.JWT([]byte(constant.SECRET_JWT))(CreateBookingControllerTesting())(context)
-
-	res_body := res.Body.String()
-	var response CartBookResponse
-	er := json.Unmarshal([]byte(res_body), &response)
-	if er != nil {
-		assert.Error(t, er, "error")
-	}
-	t.Run("POST /jwt/booking", func(t *testing.T) {
-		assert.Equal(t, testCase.ExpectCode, res.Code)
-		assert.Equal(t, "Item not available", response.Message)
-	})
-
-}
-
-// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
-// kondisi request failed
 func TestCreateBookingControllerNotAllowed(t *testing.T) {
 	var testCase = TestCaseCart{
 		Name:       "not allowed to book",
@@ -1481,3 +1436,60 @@ func TestCreateBookingControllerNoCart(t *testing.T) {
 	})
 
 }
+
+// Fungsi untuk melakukan testing fungsi GetProductsBySubcategoryIDControllers
+// kondisi request failed
+func TestCreateBookingControllerDateInvalid2(t *testing.T) {
+	var testCase = TestCaseCart{
+		Name:       "renting date invalid",
+		Path:       "/booking",
+		ExpectCode: http.StatusBadRequest,
+	}
+
+	e := InitEchoB()
+	// Mendapatkan token
+	token, err := UsingJWTB()
+	if err != nil {
+		panic(err)
+	}
+
+	InsertMockDataBToDB()
+	config.DB.Save(&mock_data_user2_b)
+	config.DB.Save(&mock_data_product2_b)
+	config.DB.Save(&mock_data_cart)
+	config.DB.Save(&mock_data_booking4)
+
+	input := models.BookingBody{
+		ProductsID: 2,
+		Time_In:    "2022-01-01",
+		Time_Out:   "2022-01-02",
+		Qty:        1,
+	}
+
+	body, err := json.Marshal(input)
+	if err != nil {
+		t.Error(t, err, "error")
+	}
+
+	req := httptest.NewRequest(http.MethodPost, "/booking", bytes.NewBuffer(body))
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	req.Header.Set(echo.HeaderAuthorization, fmt.Sprintf("Bearer %v", token))
+	res := httptest.NewRecorder()
+	context := e.NewContext(req, res)
+	context.SetPath(testCase.Path)
+	middleware.JWT([]byte(constant.SECRET_JWT))(CreateBookingControllerTesting())(context)
+
+	res_body := res.Body.String()
+	var response CartBookResponse
+	er := json.Unmarshal([]byte(res_body), &response)
+	if er != nil {
+		assert.Error(t, er, "error")
+	}
+	t.Run("POST /jwt/booking", func(t *testing.T) {
+		assert.Equal(t, testCase.ExpectCode, res.Code)
+		assert.Equal(t, "Item not available", response.Message)
+	})
+
+}
+
+// ===============================================================================================================
