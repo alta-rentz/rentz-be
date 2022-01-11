@@ -148,14 +148,17 @@ Setelah user melakukan pencarian product yang dibutuhkan dengan berbagai jaminan
 <!-- CONTACT -->
 ### Contact
 
-[![Gmail: Alfy](https://img.shields.io/badge/-Alfy-maroon?style=flat&logo=gmail)](https://mail.google.com/mail/u/0/#inbox?compose=CllgCHrjmjRlSpLttDDmhqnRQTQVTSQCjFvQxCSSqGDHvQjrjJvvzKMvnlWTrWwkcGdSzfJPXnV)
-[![GitHub Alfy](https://img.shields.io/badge/-Alfy-white?style=flat&logo=github&logoColor=black)](https://github.com/alfiancikoa)
+[![Gmail: Alfy](https://img.shields.io/badge/-Alfy-maroon?style=flat&logo=gmail)](https://mail.google.com/mail/u/0/#inbox?compose=CllgCJqTfrDgzWPFFgSKDLmBlPGRmCRXMQVTgqZDWJrxHDMJkSBGGCGnnGJhRKjrbzjJmFqnZFg)
+[![GitHub Alfy](https://img.shields.io/badge/-Alfy-white?style=flat&logo=github&logoColor=black)](https://github.com/alfynf)
+[![LinkedIn Alfy](https://img.shields.io/badge/-Alfy-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/alfynf/)
 
-[![Gmail: Andri](https://img.shields.io/badge/-Andri-maroon?style=flat&logo=gmail)](https://mail.google.com/mail/u/0/#inbox?compose=DmwnWslzCnrLrhrlnrRWdpHqsBmRtbbtZSKxXFrdGHmhLVLjLDmVfNRxdBShrxQNTBBHFgDdLfKQ)
-[![GitHub Andri](https://img.shields.io/badge/-Andri-white?style=flat&logo=github&logoColor=black)](https://github.com/DylanRipper)
+[![Gmail: Andri](https://img.shields.io/badge/-Andri-maroon?style=flat&logo=gmail)](https://mail.google.com/mail/u/0/#inbox?compose=DmwnWsTGmMWdDdZKqxxlcljVZWJgzGWzDDsRPbVDDjgJkvPQNjntKLjHdhgKbQsWbSqKxdfnZvPQ)
+[![GitHub Andri](https://img.shields.io/badge/-Andri-white?style=flat&logo=github&logoColor=black)](https://github.com/MuhAndriJP)
+[![LinkedIn Andri](https://img.shields.io/badge/-Andri-blue?style=flat&logo=linkedin)](https://id.linkedin.com/in/muhammad-andri-j-p)
 
 [![Gmail: Fafa](https://img.shields.io/badge/-Fafa-maroon?style=flat&logo=gmail)](https://mail.google.com/mail/u/0/#inbox?compose=DmwnWslzCnrLrhrlnrRWdpHqsBmRtbbtZSKxXFrdGHmhLVLjLDmVfNRxdBShrxQNTBBHFgDdLfKQ)
 [![GitHub FAfa](https://img.shields.io/badge/-Fafa-white?style=flat&logo=github&logoColor=black)](https://github.com/DylanRipper)
+[![LinkedIn Fafa](https://img.shields.io/badge/-Fafa-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/naufal-muhammad-93001b179/)
 
 
 <p align="center">:copyright: 2021 | AAF</p>
